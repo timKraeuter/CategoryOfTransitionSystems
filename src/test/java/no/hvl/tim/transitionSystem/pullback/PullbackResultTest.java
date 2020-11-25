@@ -1,5 +1,6 @@
 package no.hvl.tim.transitionSystem.pullback;
 
+import com.google.common.collect.Lists;
 import no.hvl.tim.transitionSystem.State;
 import no.hvl.tim.transitionSystem.TSMorphism;
 import no.hvl.tim.transitionSystem.Transition;
@@ -8,6 +9,8 @@ import no.hvl.tim.transitionSystem.builder.TSMorphismBuilder;
 import no.hvl.tim.transitionSystem.builder.TransitionSystemBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -67,7 +70,11 @@ class PullbackResultTest {
         assertThat(result.getM1().getSource(), is(result.getM2().getSource()));
         // System has two states and transitions
         final TransitionSystem resultSystem = result.getM1().getSource();
-        assertThat(resultSystem.getStates().size(), is(2));
+        // State names have to be the following. Or should state names come from the synchronization?
+        assertThat(resultSystem.getStates().stream()
+                               .map(State::getName)
+                               .collect(Collectors.toList()),
+                is(Lists.newArrayList("l1/r1", "l2/r1")));
         assertThat(resultSystem.getTransitions().size(), is(2));
         // TODO Check for one loop and one normal transition. We need labels for this
     }

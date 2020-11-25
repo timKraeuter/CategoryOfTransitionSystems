@@ -10,6 +10,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PullbackResult {
+    /**
+     * Pattern for the composite names of the states in a pullback.
+     */
+    public static final String compositeStateNamePattern = "%s/%s";
+
     private final TSMorphism m1;
     private final TSMorphism m2;
 
@@ -17,11 +22,23 @@ public class PullbackResult {
         final TransitionSystemBuilder pullbackBuilder = new TransitionSystemBuilder();
         final TSMorphismBuilder m1Builder = new TSMorphismBuilder();
         final TSMorphismBuilder m2Builder = new TSMorphismBuilder();
+
         // Determine states + state mappings
         final Pair<Map<State, State>, Map<State, State>> stateMappings = calcPullbackStates(input, pullbackBuilder);
+
         // Determine transitions + transition mappings
-        
+        calcPullbackTransitions(input, stateMappings, pullbackBuilder, m1Builder, m2Builder);
+
         return new PullbackResult(m1Builder.build(), m2Builder.build());
+    }
+
+    private static void calcPullbackTransitions(
+            final Cospan input,
+            final Pair<Map<State, State>, Map<State, State>> stateMappings,
+            final TransitionSystemBuilder pullbackBuilder,
+            final TSMorphismBuilder m1Builder,
+            final TSMorphismBuilder m2Builder) {
+        
     }
 
     private static Pair<Map<State, State>, Map<State, State>> calcPullbackStates(
@@ -35,8 +52,12 @@ public class PullbackResult {
 
                 // Include a state if they map to the same state in in the cospan.
                 if (input.getI1().mapState(i1state) == input.getI2().mapState(i2state)) {
-                    // Guarantees commutativity of the pullback square
-                    final State pullbackState = new State(i1state.getName() + "/" + i2state.getName());
+                    // The condition guarantees commutativity of the pullback square.
+                    final State pullbackState = new State(
+                            String.format(
+                                    compositeStateNamePattern,
+                                    i1state.getName(),
+                                    i2state.getName()));
                     pullbackBuilder.addState(pullbackState);
                     m1_state_map.put(pullbackState, i1state);
                     m2_state_map.put(pullbackState, i2state);
