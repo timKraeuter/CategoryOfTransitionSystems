@@ -76,7 +76,22 @@ class PullbackResultTest {
                                .collect(Collectors.toList()),
                 is(Lists.newArrayList("l1/r1", "l2/r1")));
         assertThat(resultSystem.getTransitions().size(), is(2));
-        // TODO Check for one loop and one normal transition. We need labels for this
+        final Transition trans1 = getTransitionForLabel(resultSystem, "<l2,r1>");
+        final Transition trans2 = getTransitionForLabel(resultSystem, "<l1,r1>");
+        // Check loop
+        assertThat(trans1.getSource().getName(), is("l2/r1"));
+        assertThat(trans1.getSource(), is(trans1.getTarget()));
+        // Check normal transition
+        assertThat(trans2.getSource().getName(), is("l1/r1"));
+        assertThat(trans2.getTarget().getName(), is("l2/r1"));
+    }
+
+    private Transition getTransitionForLabel(final TransitionSystem resultSystem, final String labelname) {
+        return resultSystem.getTransitions()
+                           .stream()
+                           .filter(transition -> transition.getLabel().equals(labelname))
+                           .findAny()
+                           .orElseThrow(RuntimeException::new);
     }
 
     @Test

@@ -38,4 +38,7 @@ public class TransitionSystemBuilder {
         return new TransitionSystem(this.states, this.transitions);
     }
 
+    public Set<State> getStates() {
+        return states;
+    }
 }

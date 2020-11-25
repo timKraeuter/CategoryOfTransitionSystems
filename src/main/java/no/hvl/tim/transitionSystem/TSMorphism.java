@@ -41,10 +41,22 @@ public class TSMorphism {
         if (mappedState == null) {
             throw new RuntimeException(
                     String.format(
-                            "The state %s is not part of the state mapping. Only the following states get mapped %s",
+                            "The state %s is not part of the state mapping. Only the following states are mapped %s",
                             state,
                             stateMapping.keySet()));
         }
         return mappedState;
+    }
+
+    public Transition mapTransition(final Transition transition) {
+        final Transition mappedTransition = this.transitionMapping.get(transition);
+        if (mappedTransition == null) {
+            throw new RuntimeException(
+                    String.format(
+                            "The transition %s is not part of the transition mapping. Only the following transitions are mapped %s",
+                            transition,
+                            transitionMapping.keySet()));
+        }
+        return mappedTransition;
     }
 }
