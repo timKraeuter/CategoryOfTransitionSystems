@@ -35,4 +35,16 @@ public class TSMorphism {
     public Map<Transition, Transition> getTransitionMapping() {
         return transitionMapping;
     }
+
+    public State mapState(State state) {
+        final State mappedState = this.stateMapping.get(state);
+        if (mappedState == null) {
+            throw new RuntimeException(
+                    String.format(
+                            "The state %s is not part of the state mapping. Only the following states get mapped %s",
+                            state,
+                            stateMapping.keySet()));
+        }
+        return mappedState;
+    }
 }

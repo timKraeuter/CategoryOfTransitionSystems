@@ -58,6 +58,11 @@ public class TSMorphismBuilder {
     public TSMorphism build() {
         assert this.source != null;
         assert this.target != null;
+
+        // State and transition mapping has to be total
+        assert this.stateMapping.keySet().containsAll(this.source.getStates());
+        assert this.transitionMapping.keySet().containsAll(this.source.getTransitions());
+
         return new TSMorphism(this.source, this.target, this.stateMapping, this.transitionMapping);
     }
 }
