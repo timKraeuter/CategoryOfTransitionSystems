@@ -1,9 +1,11 @@
 package no.hvl.tim.transitionSystem.pullback;
 
+import com.google.common.collect.Sets;
 import no.hvl.tim.transitionSystem.State;
 import no.hvl.tim.transitionSystem.TSMorphism;
 import no.hvl.tim.transitionSystem.Transition;
 import no.hvl.tim.transitionSystem.TransitionSystem;
+import no.hvl.tim.transitionSystem.TransitionSystemTestHelper;
 import no.hvl.tim.transitionSystem.builder.TSMorphismBuilder;
 import no.hvl.tim.transitionSystem.builder.TransitionSystemBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class TrafficLightPullbackExample {
+public class TrafficLightPullbackExample implements TransitionSystemTestHelper {
 
     TransitionSystemBuilder left;
     TransitionSystemBuilder right;
@@ -38,7 +40,7 @@ public class TrafficLightPullbackExample {
 
         // Build right side transition system
         final State red = new State("red");
-        final State red_amber = new State("red_amber");
+        final State red_amber = new State("red-amber");
         final State green = new State("green");
         final State amber = new State("amber");
         final Transition turn_red_amber = new Transition(red, red_amber, "turn red-amber");
@@ -82,5 +84,21 @@ public class TrafficLightPullbackExample {
         final PullbackResult result = PullbackResult.calculate(new Cospan(left_morphism, right_morphism));
         // source is the same system
         assertThat(result.getM1().getSource(), is(result.getM2().getSource()));
+        // Four states with the given names expected
+        final TransitionSystem pullbackSystem = result.getM1().getSource();
+        assertThat(
+                getStateNamesForTS(pullbackSystem),
+                is(Sets.newHashSet("go/red", "wait/red-amber", "wait/green", "wait/amber")));
+        assertThat(pullbackSystem.getTransitions().size(), is(8));
+        // 4 Transitions
+        expectTransitionWithLabelFromTo(pullbackSystem, "go/red", "wait/red-amber", "<turn red, turn red-amber>");
+        expectTransitionWithLabelFromTo(pullbackSystem, "wait/red-amber", "wait/green", "<*, turn green>");
+        expectTransitionWithLabelFromTo(pullbackSystem, "wait/green", "wait/amber", "<*, turn amber>");
+        expectTransitionWithLabelFromTo(pullbackSystem, "wait/amber", "go/red", "<turn green, turn red>");
+        // 4 Idle Transitions
+        expectTransitionWithLabelFromTo(pullbackSystem, "go/red", "go/red", "<*, *>");
+        expectTransitionWithLabelFromTo(pullbackSystem, "wait/red-amber", "wait/red-amber", "<*, *>");
+        expectTransitionWithLabelFromTo(pullbackSystem, "wait/green", "wait/green", "<*, *>");
+        expectTransitionWithLabelFromTo(pullbackSystem, "wait/amber", "wait/amber", "<*, *>");
     }
 }

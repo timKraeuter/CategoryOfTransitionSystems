@@ -20,7 +20,7 @@ public class PullbackResult {
     /**
      * Pattern for the execution of parallel transitions in the pullback system.
      */
-    public static final String transitionFormat = "<%s,%s>";
+    public static final String transitionFormat = "<%s, %s>";
 
     private final TSMorphism m1;
     private final TSMorphism m2;

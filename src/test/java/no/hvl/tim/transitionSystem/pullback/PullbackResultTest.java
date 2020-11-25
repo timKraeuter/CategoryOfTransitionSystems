@@ -1,21 +1,20 @@
 package no.hvl.tim.transitionSystem.pullback;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import no.hvl.tim.transitionSystem.State;
 import no.hvl.tim.transitionSystem.TSMorphism;
 import no.hvl.tim.transitionSystem.Transition;
 import no.hvl.tim.transitionSystem.TransitionSystem;
+import no.hvl.tim.transitionSystem.TransitionSystemTestHelper;
 import no.hvl.tim.transitionSystem.builder.TSMorphismBuilder;
 import no.hvl.tim.transitionSystem.builder.TransitionSystemBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.stream.Collectors;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-class PullbackResultTest {
+class PullbackResultTest implements TransitionSystemTestHelper {
 
     TransitionSystemBuilder left;
     TransitionSystemBuilder right;
@@ -71,27 +70,16 @@ class PullbackResultTest {
         // System has two states and transitions
         final TransitionSystem resultSystem = result.getM1().getSource();
         // State names have to be the following. Or should state names come from the synchronization?
-        assertThat(resultSystem.getStates().stream()
-                               .map(State::getName)
-                               .collect(Collectors.toList()),
-                is(Lists.newArrayList("l1/r1", "l2/r1")));
+        assertThat(getStateNamesForTS(resultSystem), is(Sets.newHashSet("l1/r1", "l2/r1")));
         assertThat(resultSystem.getTransitions().size(), is(2));
-        final Transition trans1 = getTransitionForLabel(resultSystem, "<l2,r1>");
-        final Transition trans2 = getTransitionForLabel(resultSystem, "<l1,r1>");
+        final Transition trans1 = getTransitionForLabel(resultSystem, "<l2, r1>");
+        final Transition trans2 = getTransitionForLabel(resultSystem, "<l1, r1>");
         // Check loop
         assertThat(trans1.getSource().getName(), is("l2/r1"));
         assertThat(trans1.getSource(), is(trans1.getTarget()));
         // Check normal transition
         assertThat(trans2.getSource().getName(), is("l1/r1"));
         assertThat(trans2.getTarget().getName(), is("l2/r1"));
-    }
-
-    private Transition getTransitionForLabel(final TransitionSystem resultSystem, final String labelname) {
-        return resultSystem.getTransitions()
-                           .stream()
-                           .filter(transition -> transition.getLabel().equals(labelname))
-                           .findAny()
-                           .orElseThrow(RuntimeException::new);
     }
 
     @Test
