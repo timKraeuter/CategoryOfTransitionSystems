@@ -7,6 +7,7 @@ import no.hvl.tim.transitionSystem.TransitionSystem;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Ein Builder für unveränderliche Morphismen.
@@ -53,6 +54,41 @@ public class TSMorphismBuilder {
         this.addStateMapping(from.getTarget(), to.getTarget());
         this.transitionMapping.put(from, to);
         return this;
+    }
+
+    public TSMorphism buildWithIdleTransitions() {
+        assert this.source != null;
+        assert this.target != null;
+
+        // State mapping has to be total
+        assert this.stateMapping.keySet().containsAll(this.source.getStates());
+
+        // Automatically map idle transitions to idle transitions
+        this.stateMapping.forEach((sourceState, targetState) ->
+                this.transitionMapping.put(
+                        this.findIdleTransitionForState(sourceState, source),
+                        this.findIdleTransitionForState(targetState, target))
+        );
+        // Automatically map undefined transitions to idle transitions
+        final Set<Transition> mappedTransitions = this.transitionMapping.keySet();
+        this.source.getTransitions().stream()
+                   .filter(transition -> !mappedTransitions.contains(transition))
+                   .forEach(unmappedTransition -> {
+                       final Transition idleTranstionInTheTargetSystemState = this.findIdleTransitionForState(
+                               this.stateMapping.get(unmappedTransition.getSource()), target);
+                       this.transitionMapping.put(
+                               unmappedTransition,
+                               idleTranstionInTheTargetSystemState);
+                   });
+
+        return new TSMorphism(this.source, this.target, this.stateMapping, this.transitionMapping);
+    }
+
+    private Transition findIdleTransitionForState(final State stateOfSystem, final TransitionSystem system) {
+        return system.getTransitions().stream()
+                     .filter(transition -> transition.getSource().equals(stateOfSystem) && transition.getLabel().equals("*"))
+                     .findAny()
+                     .orElseThrow(RuntimeException::new);
     }
 
     public TSMorphism build() {

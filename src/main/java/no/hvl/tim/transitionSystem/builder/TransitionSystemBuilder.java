@@ -34,6 +34,11 @@ public class TransitionSystemBuilder {
         return this;
     }
 
+    public TransitionSystem buildWithIdleTransitions() {
+        this.states.forEach(state -> this.transitions.add(new Transition(state, state, "*")));
+        return this.build();
+    }
+
     public TransitionSystem build() {
         return new TransitionSystem(this.states, this.transitions);
     }

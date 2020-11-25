@@ -34,7 +34,7 @@ public class TrafficLightPullbackExample {
         final Transition turn_green = new Transition(wait, go, "turn green");
         left.addTransition(turn_red);
         left.addTransition(turn_green);
-        final TransitionSystem left_ts = left.build();
+        final TransitionSystem left_ts = left.buildWithIdleTransitions();
 
         // Build right side transition system
         final State red = new State("red");
@@ -49,18 +49,16 @@ public class TrafficLightPullbackExample {
         right.addTransition(turn_greenTL);
         right.addTransition(turn_amber);
         right.addTransition(turn_redTL);
-        final TransitionSystem right_ts = right.build();
+        final TransitionSystem right_ts = right.buildWithIdleTransitions();
 
         // Build middle
         final State goRed = new State("go/red");
         final State wait_redAmber = new State("wait/red-amber");
         final Transition turnRed_turnRedAmber = new Transition(goRed, wait_redAmber, "<turn red, turn green>");
         final Transition turnGreen_turnRed = new Transition(wait_redAmber, goRed, "<turn green, turn amber>");
-        final Transition wait_redAmber_loop = new Transition(wait_redAmber, wait_redAmber, "wait_redAmber_loop");
         middle.addTransition(turnRed_turnRedAmber);
         middle.addTransition(turnGreen_turnRed);
-        middle.addTransition(wait_redAmber_loop);
-        final TransitionSystem middle_ts = middle.build();
+        final TransitionSystem middle_ts = middle.buildWithIdleTransitions();
 
         // Build left morphism
         final TSMorphism left_morphism = new TSMorphismBuilder()
@@ -68,17 +66,18 @@ public class TrafficLightPullbackExample {
                 .target(middle_ts)
                 .addTransitionMapping(turn_red, turnRed_turnRedAmber)
                 .addTransitionMapping(turn_green, turnGreen_turnRed)
-                .build();
+                .buildWithIdleTransitions();
 
         // Build right morphism
         final TSMorphism right_morphism = new TSMorphismBuilder()
                 .source(right_ts)
                 .target(middle_ts)
                 .addTransitionMapping(turn_red_amber, turnRed_turnRedAmber)
-                .addTransitionMapping(turn_greenTL, wait_redAmber_loop)
-                .addTransitionMapping(turn_amber, wait_redAmber_loop)
+                .addStateMapping(red_amber, wait_redAmber)
+                .addStateMapping(green, wait_redAmber)
+                .addStateMapping(amber, wait_redAmber)
                 .addTransitionMapping(turn_redTL, turnGreen_turnRed)
-                .build();
+                .buildWithIdleTransitions();
 
         final PullbackResult result = PullbackResult.calculate(new Cospan(left_morphism, right_morphism));
         // source is the same system
