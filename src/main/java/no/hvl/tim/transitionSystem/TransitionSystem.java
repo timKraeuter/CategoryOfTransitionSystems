@@ -1,5 +1,6 @@
 package no.hvl.tim.transitionSystem;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -25,11 +26,11 @@ public class TransitionSystem {
     }
 
     public Set<State> getStates() {
-        return states;
+        return Collections.unmodifiableSet(states);
     }
 
     public Set<Transition> getTransitions() {
-        return transitions;
+        return Collections.unmodifiableSet(transitions);
     }
 
     public void printToConsole() {

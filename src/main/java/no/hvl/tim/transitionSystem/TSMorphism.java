@@ -1,5 +1,6 @@
 package no.hvl.tim.transitionSystem;
 
+import java.util.Collections;
 import java.util.Map;
 
 public class TSMorphism {
@@ -59,11 +60,11 @@ public class TSMorphism {
     }
 
     public Map<State, State> getStateMapping() {
-        return stateMapping;
+        return Collections.unmodifiableMap(stateMapping);
     }
 
     public Map<Transition, Transition> getTransitionMapping() {
-        return transitionMapping;
+        return Collections.unmodifiableMap(transitionMapping);
     }
 
     public State mapState(State state) {
