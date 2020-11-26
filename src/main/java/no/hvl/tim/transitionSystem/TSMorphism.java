@@ -18,6 +18,36 @@ public class TSMorphism {
         this.target = target;
         this.stateMapping = stateMapping;
         this.transitionMapping = transitionMapping;
+        this.checkTotality();
+        this.checkMappingCriteria();
+    }
+
+    private void checkTotality() {
+        assert this.stateMapping.keySet().containsAll(this.source.getStates()) : "state mapping must be total";
+        assert this.transitionMapping.keySet().containsAll(this.source.getTransitions()) : "transition mapping must be total";
+    }
+
+    private void checkMappingCriteria() {
+        for (final Map.Entry<Transition, Transition> transitionMapping : transitionMapping.entrySet()) {
+            final Transition sourceTransition = transitionMapping.getKey();
+            final Transition targetTransition = transitionMapping.getValue();
+            if (!this.mapState(sourceTransition.getSource()).equals(targetTransition.getSource())) {
+                throw new RuntimeException(
+                        String.format(
+                                "State and transition mapping do not match for the source state of the transition %s! The transition is mapped to %s but the source state to %s",
+                                sourceTransition,
+                                targetTransition,
+                                this.mapState(sourceTransition.getSource())));
+            }
+            if (!this.mapState(sourceTransition.getTarget()).equals(targetTransition.getTarget())) {
+                throw new RuntimeException(
+                        String.format(
+                                "State and transition mapping do not match for the target state of the transition %s! The transition is mapped to %s but the target state to %s",
+                                sourceTransition,
+                                targetTransition,
+                                this.mapState(sourceTransition.getTarget())));
+            }
+        }
     }
 
     public TransitionSystem getSource() {
