@@ -10,8 +10,7 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TSMorphismTest {
 
@@ -103,5 +102,10 @@ public class TSMorphismTest {
         final Map<Transition, Transition> transitionMapping2 = new HashMap<>();
         transitionMapping2.put(s, t32);
         assertThrows(RuntimeException.class, () -> new TSMorphism(source, target, stateMapping, transitionMapping2));
+    }
+
+    @Test
+    void failingTestTest() {
+        fail();
     }
 }
