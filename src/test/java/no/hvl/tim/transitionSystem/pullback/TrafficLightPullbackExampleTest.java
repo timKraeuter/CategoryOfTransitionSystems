@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class TrafficLightPullbackExample implements TransitionSystemTestHelper {
+public class TrafficLightPullbackExampleTest implements TransitionSystemTestHelper {
 
     TransitionSystemBuilder left;
     TransitionSystemBuilder right;
