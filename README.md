@@ -1,4 +1,4 @@
-![Test](https://github.com/timKraeuter/CategoryOfTransitionSystems/workflows/Java%20CI%20with%20Gradle/badge.svg)
+![Test & Analyze](https://github.com/timKraeuter/CategoryOfTransitionSystems/workflows/Test%20&%20Analyze/badge.svg)
 # CategoryOfTransitionSystems
 Implements the category of transition systems including calculating a pullback for this category.
 
