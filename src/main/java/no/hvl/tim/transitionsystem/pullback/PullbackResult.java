@@ -15,12 +15,12 @@ public class PullbackResult {
     /**
      * Pattern for the composite names of the states in a pullback.
      */
-    public static final String compositeStateNamePattern = "%s/%s";
+    public static final String COMPOSITE_STATE_NAME_PATTERN = "%s/%s";
 
     /**
      * Pattern for the execution of parallel transitions in the pullback system.
      */
-    public static final String transitionFormat = "<%s, %s>";
+    public static final String TRANSITION_FORMAT = "<%s, %s>";
 
     private final TSMorphism m1;
     private final TSMorphism m2;
@@ -45,8 +45,8 @@ public class PullbackResult {
             final TransitionSystemBuilder pullbackBuilder,
             final TSMorphismBuilder m1Builder,
             final TSMorphismBuilder m2Builder) {
-        Map<Transition, Transition> m1_transition_map = new HashMap<>();
-        Map<Transition, Transition> m2_transition_map = new HashMap<>();
+        Map<Transition, Transition> m1TransitionMap = new HashMap<>();
+        Map<Transition, Transition> m2TransitionMap = new HashMap<>();
         for (final Transition i1transition : input.getI1().getSource().getTransitions()) {
             for (final Transition i2transition : input.getI2().getSource().getTransitions()) {
                 // We loop over the product of transitions, which has to be equalized now.
@@ -57,24 +57,24 @@ public class PullbackResult {
                     State source = pullbackBuilder.getStates().stream()
                                                   .filter(state -> state.getName().equals(
                                                           String.format(
-                                                                  compositeStateNamePattern,
+                                                                  COMPOSITE_STATE_NAME_PATTERN,
                                                                   i1transition.getSource().getName(),
                                                                   i2transition.getSource().getName())))
                                                   .findFirst().get(); // has to be present
                     State target = pullbackBuilder.getStates().stream()
                                                   .filter(state -> state.getName().equals(
                                                           String.format(
-                                                                  compositeStateNamePattern,
+                                                                  COMPOSITE_STATE_NAME_PATTERN,
                                                                   i1transition.getTarget().getName(),
                                                                   i2transition.getTarget().getName())))
                                                   .findFirst().get(); // has to be present;
                     final Transition pullbackTransition = new Transition(
                             source,
                             target,
-                            String.format(transitionFormat, i1transition.getLabel(), i2transition.getLabel()));
+                            String.format(TRANSITION_FORMAT, i1transition.getLabel(), i2transition.getLabel()));
                     pullbackBuilder.addTransition(pullbackTransition);
-                    m1_transition_map.put(pullbackTransition, i1transition);
-                    m2_transition_map.put(pullbackTransition, i2transition);
+                    m1TransitionMap.put(pullbackTransition, i1transition);
+                    m2TransitionMap.put(pullbackTransition, i2transition);
                 }
             }
         }
@@ -86,8 +86,8 @@ public class PullbackResult {
         stateMappings.getKey().forEach(m1Builder::addStateMapping);
         stateMappings.getValue().forEach(m2Builder::addStateMapping);
         // Add transition mappings (checks if state mappings are compatible)
-        m1_transition_map.forEach(m1Builder::addTransitionMapping);
-        m2_transition_map.forEach(m2Builder::addTransitionMapping);
+        m1TransitionMap.forEach(m1Builder::addTransitionMapping);
+        m2TransitionMap.forEach(m2Builder::addTransitionMapping);
     }
 
     private static Pair<Map<State, State>, Map<State, State>> calcPullbackStates(
@@ -104,7 +104,7 @@ public class PullbackResult {
                     // The condition guarantees commutativity of the pullback square.
                     final State pullbackState = new State(
                             String.format(
-                                    compositeStateNamePattern,
+                                    COMPOSITE_STATE_NAME_PATTERN,
                                     i1state.getName(),
                                     i2state.getName()));
                     pullbackBuilder.addState(pullbackState);
