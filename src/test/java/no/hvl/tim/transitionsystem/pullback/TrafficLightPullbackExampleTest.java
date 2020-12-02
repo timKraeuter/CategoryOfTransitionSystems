@@ -1,20 +1,20 @@
-package no.hvl.tim.transitionSystem.pullback;
+package no.hvl.tim.transitionsystem.pullback;
 
 import com.google.common.collect.Sets;
-import no.hvl.tim.transitionSystem.State;
-import no.hvl.tim.transitionSystem.TSMorphism;
-import no.hvl.tim.transitionSystem.Transition;
-import no.hvl.tim.transitionSystem.TransitionSystem;
-import no.hvl.tim.transitionSystem.TransitionSystemTestHelper;
-import no.hvl.tim.transitionSystem.builder.TSMorphismBuilder;
-import no.hvl.tim.transitionSystem.builder.TransitionSystemBuilder;
+import no.hvl.tim.transitionsystem.State;
+import no.hvl.tim.transitionsystem.TSMorphism;
+import no.hvl.tim.transitionsystem.Transition;
+import no.hvl.tim.transitionsystem.TransitionSystem;
+import no.hvl.tim.transitionsystem.TransitionSystemTestHelper;
+import no.hvl.tim.transitionsystem.builder.TSMorphismBuilder;
+import no.hvl.tim.transitionsystem.builder.TransitionSystemBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class TrafficLightPullbackExampleTest implements TransitionSystemTestHelper {
+class TrafficLightPullbackExampleTest implements TransitionSystemTestHelper {
 
     TransitionSystemBuilder left;
     TransitionSystemBuilder right;

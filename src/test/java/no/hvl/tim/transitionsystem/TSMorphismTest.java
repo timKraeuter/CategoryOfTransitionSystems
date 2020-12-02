@@ -1,8 +1,8 @@
-package no.hvl.tim.transitionSystem;
+package no.hvl.tim.transitionsystem;
 
 import com.google.common.collect.Lists;
-import no.hvl.tim.transitionSystem.builder.TSMorphismBuilder;
-import no.hvl.tim.transitionSystem.builder.TransitionSystemBuilder;
+import no.hvl.tim.transitionsystem.builder.TSMorphismBuilder;
+import no.hvl.tim.transitionsystem.builder.TransitionSystemBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TSMorphismTest {
 
     @Test
-    public void builderEmpty() {
+    void builderEmpty() {
         final TransitionSystemBuilder targetBuilder = new TransitionSystemBuilder();
 
         final TransitionSystem target = targetBuilder.build();
@@ -31,7 +31,7 @@ public class TSMorphismTest {
     }
 
     @Test
-    public void mappingTransitionsAddsStatesAutomatically() {
+    void mappingTransitionsAddsStatesAutomatically() {
         final State s1 = new State("s1");
         final State s2 = new State("s2");
         final State t1 = new State("t1");
@@ -68,7 +68,7 @@ public class TSMorphismTest {
     }
 
     @Test
-    public void detectsInvalidTransitionMappingTest() {
+    void detectsInvalidTransitionMappingTest() {
         final State s1 = new State("s1");
         final State s2 = new State("s2");
         final Transition s = new Transition(s1, s2, "t");

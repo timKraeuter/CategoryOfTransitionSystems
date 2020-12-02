@@ -1,4 +1,4 @@
-package no.hvl.tim.transitionSystem;
+package no.hvl.tim.transitionsystem;
 
 /**
  * Desribes a state in a transition system.

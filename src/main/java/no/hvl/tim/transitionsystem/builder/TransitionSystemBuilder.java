@@ -1,8 +1,8 @@
-package no.hvl.tim.transitionSystem.builder;
+package no.hvl.tim.transitionsystem.builder;
 
-import no.hvl.tim.transitionSystem.State;
-import no.hvl.tim.transitionSystem.Transition;
-import no.hvl.tim.transitionSystem.TransitionSystem;
+import no.hvl.tim.transitionsystem.State;
+import no.hvl.tim.transitionsystem.Transition;
+import no.hvl.tim.transitionsystem.TransitionSystem;
 
 import java.util.HashSet;
 import java.util.Set;

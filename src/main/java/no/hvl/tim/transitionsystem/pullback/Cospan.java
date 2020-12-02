@@ -1,6 +1,6 @@
-package no.hvl.tim.transitionSystem.pullback;
+package no.hvl.tim.transitionsystem.pullback;
 
-import no.hvl.tim.transitionSystem.TSMorphism;
+import no.hvl.tim.transitionsystem.TSMorphism;
 
 public class Cospan {
     private final TSMorphism i1;

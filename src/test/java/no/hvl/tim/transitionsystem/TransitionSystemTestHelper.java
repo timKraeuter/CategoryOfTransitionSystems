@@ -1,4 +1,4 @@
-package no.hvl.tim.transitionSystem;
+package no.hvl.tim.transitionsystem;
 
 import java.util.Set;
 import java.util.stream.Collectors;

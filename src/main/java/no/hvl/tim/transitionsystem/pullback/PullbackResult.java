@@ -1,11 +1,11 @@
-package no.hvl.tim.transitionSystem.pullback;
+package no.hvl.tim.transitionsystem.pullback;
 
-import no.hvl.tim.transitionSystem.State;
-import no.hvl.tim.transitionSystem.TSMorphism;
-import no.hvl.tim.transitionSystem.Transition;
-import no.hvl.tim.transitionSystem.TransitionSystem;
-import no.hvl.tim.transitionSystem.builder.TSMorphismBuilder;
-import no.hvl.tim.transitionSystem.builder.TransitionSystemBuilder;
+import no.hvl.tim.transitionsystem.State;
+import no.hvl.tim.transitionsystem.TSMorphism;
+import no.hvl.tim.transitionsystem.Transition;
+import no.hvl.tim.transitionsystem.TransitionSystem;
+import no.hvl.tim.transitionsystem.builder.TSMorphismBuilder;
+import no.hvl.tim.transitionsystem.builder.TransitionSystemBuilder;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.HashMap;
