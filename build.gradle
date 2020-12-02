@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id "org.sonarqube" version "3.0"
+    id 'jacoco'
 }
 
 group 'org.example'
@@ -28,6 +29,7 @@ test {
     testLogging {
         events "passed", "skipped", "failed"
     }
+    finalizedBy jacocoTestReport
 }
 
 sonarqube {
