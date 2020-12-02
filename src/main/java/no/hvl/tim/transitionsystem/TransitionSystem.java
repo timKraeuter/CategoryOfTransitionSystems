@@ -33,7 +33,7 @@ public class TransitionSystem {
         return Collections.unmodifiableSet(transitions);
     }
 
-    public void printToConsole() {
+    public String printToString() {
         final StringBuilder builder = new StringBuilder();
         builder.append("States:");
         final List<String> stateNames = this.states.stream().map(State::getName).collect(Collectors.toList());
@@ -47,6 +47,6 @@ public class TransitionSystem {
             builder.append(",\n");
             builder.append(it.next());
         }
-        System.out.println(builder.toString());
+        return builder.toString();
     }
 }
