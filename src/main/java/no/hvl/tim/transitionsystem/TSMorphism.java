@@ -29,11 +29,11 @@ public class TSMorphism {
     }
 
     private void checkMappingCriteria() {
-        for (final Map.Entry<Transition, Transition> transitionMapping : transitionMapping.entrySet()) {
-            final Transition sourceTransition = transitionMapping.getKey();
-            final Transition targetTransition = transitionMapping.getValue();
+        for (final Map.Entry<Transition, Transition> aTransitionMapping : transitionMapping.entrySet()) {
+            final Transition sourceTransition = aTransitionMapping.getKey();
+            final Transition targetTransition = aTransitionMapping.getValue();
             if (!this.mapState(sourceTransition.getSource()).equals(targetTransition.getSource())) {
-                throw new RuntimeException(
+                throw new TransitionSystemException(
                         String.format(
                                 "State and transition mapping do not match for the source state of the transition %s! The transition is mapped to %s but the source state to %s",
                                 sourceTransition,
@@ -41,7 +41,7 @@ public class TSMorphism {
                                 this.mapState(sourceTransition.getSource())));
             }
             if (!this.mapState(sourceTransition.getTarget()).equals(targetTransition.getTarget())) {
-                throw new RuntimeException(
+                throw new TransitionSystemException(
                         String.format(
                                 "State and transition mapping do not match for the target state of the transition %s! The transition is mapped to %s but the target state to %s",
                                 sourceTransition,
@@ -70,7 +70,7 @@ public class TSMorphism {
     public State mapState(State state) {
         final State mappedState = this.stateMapping.get(state);
         if (mappedState == null) {
-            throw new RuntimeException(
+            throw new TransitionSystemException(
                     String.format(
                             "The state %s is not part of the state mapping. Only the following states are mapped %s",
                             state,
@@ -82,7 +82,7 @@ public class TSMorphism {
     public Transition mapTransition(final Transition transition) {
         final Transition mappedTransition = this.transitionMapping.get(transition);
         if (mappedTransition == null) {
-            throw new RuntimeException(
+            throw new TransitionSystemException(
                     String.format(
                             "The transition %s is not part of the transition mapping. Only the following transitions are mapped %s",
                             transition,
