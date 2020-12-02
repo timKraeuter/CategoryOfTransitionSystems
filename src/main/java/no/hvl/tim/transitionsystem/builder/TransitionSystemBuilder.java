@@ -4,15 +4,15 @@ import no.hvl.tim.transitionsystem.State;
 import no.hvl.tim.transitionsystem.Transition;
 import no.hvl.tim.transitionsystem.TransitionSystem;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
  * Erstellt einen unveränderliches Transitionssystem Schritt für Schritt.
  */
 public class TransitionSystemBuilder {
-    private final Set<State> states = new HashSet<>();
-    private final Set<Transition> transitions = new HashSet<>();
+    private final Set<State> states = new LinkedHashSet<>();
+    private final Set<Transition> transitions = new LinkedHashSet<>();
 
     /**
      * Adds a state to the transition system which is build.

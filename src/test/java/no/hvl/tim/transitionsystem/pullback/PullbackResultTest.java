@@ -81,7 +81,7 @@ class PullbackResultTest implements TransitionSystemTestHelper {
         assertThat(trans2.getSource().getName(), is("l1/r1"));
         assertThat(trans2.getTarget().getName(), is("l2/r1"));
 
-        assertThat(resultSystem.printToString(), is("States:[l2/r1, l1/r1]\n" +
+        assertThat(resultSystem.printToString(), is("States:[l1/r1, l2/r1]\n" +
                 "Transitions:\n" +
                 "l1/r1 --<l1, r1>--> l2/r1,\n" +
                 "l2/r1 --<l2, r1>--> l2/r1"));
