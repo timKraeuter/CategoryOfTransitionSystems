@@ -7,3 +7,5 @@ UML-Diagram for transition systems and morphisms:
 
 UML-Diagram co-span and pullback:
 ![co-span and pullback](https://raw.githubusercontent.com/timKraeuter/CategoryOfTransitionSystems/master/src/main/resources/Co-span%20and%20Pullback.png)
+
+Sonar results: https://sonarcloud.io/dashboard?id=timKraeuter_CategoryOfTransitionSystems
