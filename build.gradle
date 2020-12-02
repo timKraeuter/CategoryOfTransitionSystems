@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id "org.sonarqube" version "3.0"
 }
 
 group 'org.example'
@@ -26,5 +27,13 @@ test {
     useJUnitPlatform()
     testLogging {
         events "passed", "skipped", "failed"
+    }
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "timKraeuter_CategoryOfTransitionSystems"
+        property "sonar.organization", "timkraeuter"
+        property "sonar.host.url", "https://sonarcloud.io"
     }
 }
