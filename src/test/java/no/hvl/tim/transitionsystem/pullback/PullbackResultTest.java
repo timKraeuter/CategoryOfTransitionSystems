@@ -126,4 +126,81 @@ class PullbackResultTest implements TransitionSystemTestHelper {
         assertThat(resultSystem.getTransitions().size(), is(0));
 
     }
+
+    @Test
+    void handshakeTest() {
+        // Build left side transition system
+        final State s1_1 = new State("1");
+        final State s1_2 = new State("2");
+        final State s1_3 = new State("3");
+        final Transition a_trans = new Transition(s1_1, s1_2, "a");
+        left.addTransition(a_trans);
+        final Transition b_trans = new Transition(s1_2, s1_3, "b");
+        left.addTransition(b_trans);
+        final TransitionSystem left_ts = left.buildWithIdleTransitions();
+
+        // Build right side transition system
+        final State s2_2 = new State("2");
+        final State s2_3 = new State("3");
+        final State s2_4 = new State("4");
+        final Transition sysb_b_trans = new Transition(s2_2, s2_3, "b");
+        right.addTransition(sysb_b_trans);
+        final Transition sysb_c_trans = new Transition(s2_3, s2_4, "c");
+        right.addTransition(sysb_c_trans);
+        final TransitionSystem right_ts = right.buildWithIdleTransitions();
+
+        // Build middle
+        final State m2 = new State("2");
+        final State m3 = new State("3");
+        final Transition middle_b_trans = new Transition(m2, m3, "b");
+        middle.addTransition(middle_b_trans);
+        final TransitionSystem middle_ts = middle.buildWithIdleTransitions();
+
+        // Build left morphism
+        final TSMorphism left_morphism = new TSMorphismBuilder()
+                .source(left_ts)
+                .target(middle_ts)
+                .addTransitionMappingToIdle(a_trans, m2)
+                .addTransitionMapping(b_trans, middle_b_trans)
+                .buildWithIdleTransitions();
+
+        // Build right morphism
+        final TSMorphism right_morphism = new TSMorphismBuilder()
+                .source(right_ts)
+                .target(middle_ts)
+                .addTransitionMappingToIdle(sysb_c_trans, m3)
+                .addTransitionMapping(sysb_b_trans, middle_b_trans)
+                .buildWithIdleTransitions();
+
+        final PullbackResult result = PullbackResult.calculate(new Cospan(left_morphism, right_morphism));
+        // source is the same system
+        assertThat(result.getM1().getSource(), is(result.getM2().getSource()));
+        // System has two states and transitions
+        final TransitionSystem resultSystem = result.getM1().getSource();
+        // State names have to be the following. Or should state names come from the synchronization?
+        assertThat(getStateNamesForTS(resultSystem), is(Sets.newHashSet("1/2", "2/2", "3/3", "3/4")));
+        assertThat(resultSystem.getTransitions().size(), is(7));
+        final Transition trans1 = getTransitionForLabel(resultSystem, "<a, *>");
+        final Transition trans2 = getTransitionForLabel(resultSystem, "<b, b>");
+        final Transition trans3 = getTransitionForLabel(resultSystem, "<*, c>");
+        // Check transitions
+        assertThat(trans1.getSource().getName(), is("1/2"));
+        assertThat(trans1.getTarget().getName(), is("2/2"));
+
+        assertThat(trans2.getSource().getName(), is("2/2"));
+        assertThat(trans2.getTarget().getName(), is("3/3"));
+
+        assertThat(trans3.getSource().getName(), is("3/3"));
+        assertThat(trans3.getTarget().getName(), is("3/4"));
+
+        assertThat(resultSystem.printToString(), is("States:[1/2, 2/2, 3/3, 3/4]\n" +
+                "Transitions:\n" +
+                "1/2 --<a, *>--> 2/2,\n" +
+                "2/2 --<b, b>--> 3/3,\n" +
+                "1/2 --<*, *>--> 1/2,\n" +
+                "2/2 --<*, *>--> 2/2,\n" +
+                "3/3 --<*, c>--> 3/4,\n" +
+                "3/3 --<*, *>--> 3/3,\n" +
+                "3/4 --<*, *>--> 3/4"));
+    }
 }

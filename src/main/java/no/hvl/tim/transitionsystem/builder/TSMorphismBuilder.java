@@ -56,6 +56,18 @@ public class TSMorphismBuilder {
         return this;
     }
 
+    /**
+     * Maps to transitions into each other. Automatically adds the source and target mapping for the states.
+     */
+    public TSMorphismBuilder addTransitionMappingToIdle(final Transition from, final State idleState) {
+        assert this.source != null;
+        assert this.target != null;
+
+        final Transition idleTransitionForState = this.findIdleTransitionForState(idleState, this.target);
+        this.addTransitionMapping(from, idleTransitionForState);
+        return this;
+    }
+
     public TSMorphism buildWithIdleTransitions() {
         assert this.source != null;
         assert this.target != null;

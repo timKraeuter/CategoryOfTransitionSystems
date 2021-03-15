@@ -88,7 +88,7 @@ class OtherPullbackExampleTest implements TransitionSystemTestHelper {
         expectTransitionWithLabelFromTo(pullbackSystem, "z0/z'0", "z0/z'1", "<*, e2>");
         expectTransitionWithLabelFromTo(pullbackSystem, "z0/z'1", "z1/z'1", "<e1, *>");
         expectTransitionWithLabelFromTo(pullbackSystem, "z1/z'0", "z1/z'1", "<*, e2>");
-        // The following transition is missing in the picture. Investigate!
+        // The following transition is missing in the picture!
         expectTransitionWithLabelFromTo(pullbackSystem, "z0/z'0", "z1/z'1", "<e1, e2>");
         expectTransitionWithLabelFromTo(pullbackSystem, "z1/z'1", "z2/z'2", "<e, e>");
         // 5 Idle Transitions

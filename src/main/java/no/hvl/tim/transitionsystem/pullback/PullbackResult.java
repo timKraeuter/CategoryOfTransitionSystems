@@ -101,7 +101,7 @@ public class PullbackResult {
 
                 // Include a state if they map to the same state in in the cospan.
                 if (input.getI1().mapState(i1state) == input.getI2().mapState(i2state)) {
-                    // The condition guarantees commutativity of the pullback square.
+                    // The condition guarantees commutativity of the pullback square for states.
                     final State pullbackState = new State(
                             String.format(
                                     COMPOSITE_STATE_NAME_PATTERN,
