@@ -37,7 +37,8 @@ public class TSMorphismBuilder {
         assert this.target.getStates().contains(to)
                 : "The to state has to be contained in the states of the target ts!";
         // No mapping or the one which should be set.
-        assert this.stateMapping.get(from) == null || this.stateMapping.get(from) == to;
+        assert this.stateMapping.get(from) == null || this.stateMapping.get(from) == to
+                : String.format("The state %s was expected to be %s.", to, this.stateMapping.get(from));
 
         this.stateMapping.put(from, to);
         return this;

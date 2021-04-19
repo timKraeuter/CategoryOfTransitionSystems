@@ -90,4 +90,34 @@ public class TSMorphism {
         }
         return mappedTransition;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append("From:\n")
+               .append(this.source.toString())
+               .append("\nTo:\n")
+               .append(this.target.toString());
+
+        builder.append("\nState mapping:");
+        this.stateMapping.forEach((from, to) -> {
+            builder.append("\n");
+            builder.append(from);
+            builder.append(" -> ");
+            builder.append(to);
+        });
+
+        builder.append("\nTransition mapping:");
+        this.transitionMapping.forEach((from, to) -> {
+            builder.append("\n");
+            builder.append("(");
+            builder.append(from);
+            builder.append(")");
+            builder.append(" -> ");
+            builder.append("(");
+            builder.append(to);
+            builder.append(")");
+        });
+        return builder.toString();
+    }
 }

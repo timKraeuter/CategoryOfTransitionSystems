@@ -52,7 +52,7 @@ public class PullbackResult {
                 // We loop over the product of transitions, which has to be equalized now.
 
                 // Include a transition-pair if they map to the same transition in the cospan.
-                if (input.getI1().mapTransition(i1transition) == input.getI2().mapTransition(i2transition)) {
+                if (input.getI1().mapTransition(i1transition).equals(input.getI2().mapTransition(i2transition))) {
                     // could be made more efficient by iterating once and calculating 2 maps.
                     State source = pullbackBuilder.getStates().stream()
                                                   .filter(state -> state.getName().equals(
@@ -100,7 +100,7 @@ public class PullbackResult {
                 // We loop over the product of states, which has to be equalized now.
 
                 // Include a state if they map to the same state in in the cospan.
-                if (input.getI1().mapState(i1state) == input.getI2().mapState(i2state)) {
+                if (input.getI1().mapState(i1state).equals(input.getI2().mapState(i2state))) {
                     // The condition guarantees commutativity of the pullback square for states.
                     final State pullbackState = new State(
                             String.format(

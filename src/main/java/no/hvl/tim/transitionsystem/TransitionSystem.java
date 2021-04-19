@@ -1,5 +1,7 @@
 package no.hvl.tim.transitionsystem;
 
+import com.google.common.base.Objects;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -33,7 +35,20 @@ public class TransitionSystem {
         return Collections.unmodifiableSet(transitions);
     }
 
-    public String printToString() {
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TransitionSystem)) return false;
+        final TransitionSystem that = (TransitionSystem) o;
+        return Objects.equal(getStates(), that.getStates()) && Objects.equal(getTransitions(), that.getTransitions());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getStates(), getTransitions());
+    }
+
+    public String toString() {
         final StringBuilder builder = new StringBuilder();
         builder.append("States:");
         final List<String> stateNames = this.states.stream().map(State::getName).collect(Collectors.toList());
