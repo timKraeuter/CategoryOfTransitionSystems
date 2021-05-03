@@ -5,10 +5,10 @@ import java.util.Map;
 
 public class TSMorphism {
 
-    private TransitionSystem source;
-    private TransitionSystem target;
-    private Map<State, State> stateMapping;
-    private Map<Transition, Transition> transitionMapping;
+    private final TransitionSystem source;
+    private final TransitionSystem target;
+    private final Map<State, State> stateMapping;
+    private final Map<Transition, Transition> transitionMapping;
 
     public TSMorphism(
             final TransitionSystem source,
@@ -29,9 +29,9 @@ public class TSMorphism {
     }
 
     private void checkMappingCriteria() {
-        for (final Map.Entry<Transition, Transition> aTransitionMapping : transitionMapping.entrySet()) {
-            final Transition sourceTransition = aTransitionMapping.getKey();
-            final Transition targetTransition = aTransitionMapping.getValue();
+        for (final Map.Entry<Transition, Transition> aTransitionMapping : this.transitionMapping.entrySet()) {
+            final var sourceTransition = aTransitionMapping.getKey();
+            final var targetTransition = aTransitionMapping.getValue();
             if (!this.mapState(sourceTransition.getSource()).equals(targetTransition.getSource())) {
                 throw new TransitionSystemException(
                         String.format(
@@ -52,48 +52,48 @@ public class TSMorphism {
     }
 
     public TransitionSystem getSource() {
-        return source;
+        return this.source;
     }
 
     public TransitionSystem getTarget() {
-        return target;
+        return this.target;
     }
 
     public Map<State, State> getStateMapping() {
-        return Collections.unmodifiableMap(stateMapping);
+        return Collections.unmodifiableMap(this.stateMapping);
     }
 
     public Map<Transition, Transition> getTransitionMapping() {
-        return Collections.unmodifiableMap(transitionMapping);
+        return Collections.unmodifiableMap(this.transitionMapping);
     }
 
-    public State mapState(State state) {
-        final State mappedState = this.stateMapping.get(state);
+    public State mapState(final State state) {
+        final var mappedState = this.stateMapping.get(state);
         if (mappedState == null) {
             throw new TransitionSystemException(
                     String.format(
                             "The state %s is not part of the state mapping. Only the following states are mapped %s",
                             state,
-                            stateMapping.keySet()));
+                            this.stateMapping.keySet()));
         }
         return mappedState;
     }
 
     public Transition mapTransition(final Transition transition) {
-        final Transition mappedTransition = this.transitionMapping.get(transition);
+        final var mappedTransition = this.transitionMapping.get(transition);
         if (mappedTransition == null) {
             throw new TransitionSystemException(
                     String.format(
                             "The transition %s is not part of the transition mapping. Only the following transitions are mapped %s",
                             transition,
-                            transitionMapping.keySet()));
+                            this.transitionMapping.keySet()));
         }
         return mappedTransition;
     }
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
+        final var builder = new StringBuilder();
         builder.append("From:\n")
                .append(this.source.toString())
                .append("\nTo:\n")

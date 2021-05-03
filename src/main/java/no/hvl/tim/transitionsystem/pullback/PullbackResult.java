@@ -221,14 +221,14 @@ public class PullbackResult {
                                             STATE_NAME_PATTERN,
                                             i1transition.getSource().getName(),
                                             i2transition.getSource().getName())))
-                            .findFirst().get(); // has to be present
+                            .findFirst().get();
                     final State target = pullbackBuilder.getStates().stream()
                             .filter(state -> state.getName().equals(
                                     String.format(
                                             STATE_NAME_PATTERN,
                                             i1transition.getTarget().getName(),
                                             i2transition.getTarget().getName())))
-                            .findFirst().get(); // has to be present;
+                            .findFirst().get();
                     final var pullbackTransition = new Transition(
                             source,
                             target,
@@ -254,7 +254,7 @@ public class PullbackResult {
     private static Pair<Map<State, State>, Map<State, State>> calcPullbackStates(
             final Cospan input,
             final TransitionSystemBuilder pullbackBuilder) {
-        boolean foundStartState = false;
+        var foundStartState = false;
 
         final Map<State, State> m1_state_map = new HashMap<>();
         final Map<State, State> m2_state_map = new HashMap<>();
@@ -265,7 +265,7 @@ public class PullbackResult {
                 // Include a state if they map to the same state in in the cospan.
                 if (input.getI1().mapState(i1state).equals(input.getI2().mapState(i2state))) {
                     // The condition guarantees commutativity of the pullback square for states.
-                    final State pullbackState = new State(
+                    final var pullbackState = new State(
                             String.format(
                                     STATE_NAME_PATTERN,
                                     i1state.getName(),

@@ -51,7 +51,7 @@ public class TransitionSystem {
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
+        final var builder = new StringBuilder();
         builder.append("States:");
         final List<String> stateNames = this.states.stream().map(State::getName).collect(Collectors.toList());
         builder.append(stateNames);
