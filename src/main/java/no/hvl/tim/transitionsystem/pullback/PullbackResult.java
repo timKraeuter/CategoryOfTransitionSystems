@@ -36,11 +36,11 @@ public class PullbackResult {
         if (!interactions.entrySet().stream().allMatch(transPair -> ts1.getTransitions().contains(transPair.getKey())
                 && ts2.getTransitions().contains(transPair.getValue()))) {
             // TODO better exception.
-            throw new RuntimeException("Interactions must be contained in transition systems!");
+            throw new TransitionSystemException("Interactions must be contained in transition systems!");
         }
-        final TransitionSystemBuilder coordinationInterfaceBuilder = new TransitionSystemBuilder();
+        final var coordinationInterfaceBuilder = new TransitionSystemBuilder();
         // Start state
-        final State startState = new State(String.format(
+        final var startState = new State(String.format(
                 STATE_NAME_PATTERN,
                 ts1.getStartState().getName(),
                 ts2.getStartState().getName()));
@@ -55,17 +55,16 @@ public class PullbackResult {
         ts2StateMapping.put(ts2.getStartState(), startState);
 
         // Synched transitions
-        interactions.forEach((Transition ts1Transition, Transition ts2Transition) -> {
-            // we expect one transition to be synched with at most one other transition
-            createdSynchedTransition(
-                    ts1TransitionMapping,
-                    ts2TransitionMapping,
-                    ts1StateMapping,
-                    ts2StateMapping,
-                    ts1Transition,
-                    ts2Transition,
-                    coordinationInterfaceBuilder);
-        });
+        interactions.forEach((Transition ts1Transition, Transition ts2Transition) ->
+                // we expect one transition to be synched with at most one other transition
+                createdSynchedTransition(
+                        ts1TransitionMapping,
+                        ts2TransitionMapping,
+                        ts1StateMapping,
+                        ts2StateMapping,
+                        ts1Transition,
+                        ts2Transition,
+                        coordinationInterfaceBuilder));
 
         // Make the mapping total. We expect that all states are reachable.
         // ts1
@@ -102,8 +101,8 @@ public class PullbackResult {
         while (!unmappedts1Transitions.isEmpty()) {
             final Set<Transition> mappedTransitions = new LinkedHashSet<>();
             for (final Transition transition : unmappedts1Transitions) {
-                final State sourceMapped = ts1StateMapping.get(transition.getSource());
-                final State targetMapped = ts1StateMapping.get(transition.getTarget());
+                final var sourceMapped = ts1StateMapping.get(transition.getSource());
+                final var targetMapped = ts1StateMapping.get(transition.getTarget());
                 if (sourceMapped != null && targetMapped != null && !sourceMapped.equals(targetMapped)) {
                     // TODO: think about what to do in this case.
                     throw new TransitionSystemException("Both states mapped and not similar!");
@@ -147,7 +146,7 @@ public class PullbackResult {
                 ts2Transition.getTarget(),
                 coordinationInterfaceBuilder);
         // Handle transition
-        final Transition combinedTransition = new Transition(
+        final var combinedTransition = new Transition(
                 // Since the states are mapped to the same state for ts1 and ts2 we just take ts1 here.
                 ts1StateMapping.get(ts1Transition.getSource()),
                 ts1StateMapping.get(ts1Transition.getTarget()),
@@ -164,10 +163,10 @@ public class PullbackResult {
             final State ts1State,
             final State ts2State,
             final TransitionSystemBuilder coordinationInterfaceBuilder) {
-        final State ts1EquivalentState = ts1StateMapping.get(ts1State);
-        final State ts2EquivalentState = ts2StateMapping.get(ts2State);
+        final var ts1EquivalentState = ts1StateMapping.get(ts1State);
+        final var ts2EquivalentState = ts2StateMapping.get(ts2State);
         if (ts1EquivalentState == null && ts2EquivalentState == null) {
-            final State compositeState = new State(String.format(
+            final var compositeState = new State(String.format(
                     STATE_NAME_PATTERN,
                     ts1State.getName(),
                     ts2State.getName()));
@@ -187,7 +186,7 @@ public class PullbackResult {
     }
 
     public static PullbackResult calculate(final Cospan input) {
-        final TransitionSystemBuilder pullbackBuilder = new TransitionSystemBuilder();
+        final var pullbackBuilder = new TransitionSystemBuilder();
         final TSMorphismBuilder m1Builder = new TSMorphismBuilder().target(input.getI1().getSource());
         final TSMorphismBuilder m2Builder = new TSMorphismBuilder().target(input.getI2().getSource());
 
@@ -230,7 +229,7 @@ public class PullbackResult {
                                             i1transition.getTarget().getName(),
                                             i2transition.getTarget().getName())))
                             .findFirst().get(); // has to be present;
-                    final Transition pullbackTransition = new Transition(
+                    final var pullbackTransition = new Transition(
                             source,
                             target,
                             String.format(TRANSITION_NAME_FORMAT, i1transition.getLabel(), i2transition.getLabel()));
