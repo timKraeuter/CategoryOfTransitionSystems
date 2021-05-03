@@ -16,31 +16,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class TSMorphismTest {
 
     @Test
-    void builderEmpty() {
-        final TransitionSystemBuilder targetBuilder = new TransitionSystemBuilder();
-
-        final TransitionSystem target = targetBuilder.build();
-
-        final TSMorphism morphism = new TSMorphismBuilder()
-                .source(TransitionSystem.emptySystem())
-                .target(target)
-                .build();
-
-        assertThat(morphism.getSource(), is(TransitionSystem.emptySystem()));
-        assertThat(morphism.getTarget(), is(target));
-    }
-
-    @Test
     void mappingTransitionsAddsStatesAutomatically() {
         final State s1 = new State("s1");
         final State s2 = new State("s2");
         final State t1 = new State("t1");
         final State t2 = new State("t2");
 
-        final TransitionSystemBuilder sourceBuilder = new TransitionSystemBuilder();
+        final TransitionSystemBuilder sourceBuilder = new TransitionSystemBuilder().startState(s1);
         final Transition trans1 = new Transition(s1, s2, "a");
         sourceBuilder.addTransition(trans1);
-        final TransitionSystemBuilder targetBuilder = new TransitionSystemBuilder();
+        final TransitionSystemBuilder targetBuilder = new TransitionSystemBuilder().startState(t1);
         final Transition trans2 = new Transition(t1, t2, "a");
         targetBuilder.addTransition(trans2);
 
@@ -73,6 +58,7 @@ class TSMorphismTest {
         final State s2 = new State("s2");
         final Transition s = new Transition(s1, s2, "t");
         final TransitionSystemBuilder sourceBuilder = new TransitionSystemBuilder()
+                .startState(s1)
                 .addState(s1)
                 .addState(s2)
                 .addTransition(s);
@@ -82,6 +68,7 @@ class TSMorphismTest {
         final Transition t13 = new Transition(t1, t3, "t13");
         final Transition t32 = new Transition(t3, t2, "t32");
         final TransitionSystemBuilder targetBuilder = new TransitionSystemBuilder()
+                .startState(t1)
                 .addState(t1)
                 .addState(t2)
                 .addState(t3)

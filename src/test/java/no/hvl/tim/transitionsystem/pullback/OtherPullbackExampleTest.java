@@ -1,11 +1,7 @@
 package no.hvl.tim.transitionsystem.pullback;
 
 import com.google.common.collect.Sets;
-import no.hvl.tim.transitionsystem.State;
-import no.hvl.tim.transitionsystem.TSMorphism;
-import no.hvl.tim.transitionsystem.Transition;
-import no.hvl.tim.transitionsystem.TransitionSystem;
-import no.hvl.tim.transitionsystem.TransitionSystemTestHelper;
+import no.hvl.tim.transitionsystem.*;
 import no.hvl.tim.transitionsystem.builder.TSMorphismBuilder;
 import no.hvl.tim.transitionsystem.builder.TransitionSystemBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,9 +18,9 @@ class OtherPullbackExampleTest implements TransitionSystemTestHelper {
 
     @BeforeEach
     void setUp() {
-        left = new TransitionSystemBuilder();
-        right = new TransitionSystemBuilder();
-        middle = new TransitionSystemBuilder();
+        this.left = new TransitionSystemBuilder();
+        this.right = new TransitionSystemBuilder();
+        this.middle = new TransitionSystemBuilder();
     }
 
     @Test
@@ -35,9 +31,10 @@ class OtherPullbackExampleTest implements TransitionSystemTestHelper {
         final State z2_l = new State("z2");
         final Transition e1_l = new Transition(z0_l, z1_l, "e1");
         final Transition e_l = new Transition(z1_l, z2_l, "e");
-        left.addTransition(e1_l);
-        left.addTransition(e_l);
-        final TransitionSystem left_ts = left.buildWithIdleTransitions();
+        this.left.startState(z0_l)
+                .addTransition(e1_l)
+                .addTransition(e_l);
+        final TransitionSystem left_ts = this.left.buildWithIdleTransitions();
 
         // Build right side transition system
         final State z0_r = new State("z'0");
@@ -45,16 +42,18 @@ class OtherPullbackExampleTest implements TransitionSystemTestHelper {
         final State z2_r = new State("z'2");
         final Transition e2_r = new Transition(z0_r, z1_r, "e2");
         final Transition e_r = new Transition(z1_r, z2_r, "e");
-        right.addTransition(e2_r);
-        right.addTransition(e_r);
-        final TransitionSystem right_ts = right.buildWithIdleTransitions();
+        this.right.startState(z0_r)
+                .addTransition(e2_r)
+                .addTransition(e_r);
+        final TransitionSystem right_ts = this.right.buildWithIdleTransitions();
 
         // Build middle
         final State z01 = new State("z01");
         final State z2 = new State("z2");
         final Transition e = new Transition(z01, z2, "e");
-        middle.addTransition(e);
-        final TransitionSystem middle_ts = middle.buildWithIdleTransitions();
+        this.middle.startState(z01)
+                .addTransition(e);
+        final TransitionSystem middle_ts = this.middle.buildWithIdleTransitions();
 
         // Build left morphism
         final TSMorphism left_morphism = new TSMorphismBuilder()
@@ -80,22 +79,22 @@ class OtherPullbackExampleTest implements TransitionSystemTestHelper {
         // Four states with the given names expected
         final TransitionSystem pullbackSystem = result.getM1().getSource();
         assertThat(
-                getStateNamesForTS(pullbackSystem),
+                this.getStateNamesForTS(pullbackSystem),
                 is(Sets.newHashSet("z0/z'0", "z1/z'0", "z0/z'1", "z1/z'1", "z2/z'2")));
         assertThat(pullbackSystem.getTransitions().size(), is(11));
         // 6 Transitions
-        expectTransitionWithLabelFromTo(pullbackSystem, "z0/z'0", "z1/z'0", "<e1, *>");
-        expectTransitionWithLabelFromTo(pullbackSystem, "z0/z'0", "z0/z'1", "<*, e2>");
-        expectTransitionWithLabelFromTo(pullbackSystem, "z0/z'1", "z1/z'1", "<e1, *>");
-        expectTransitionWithLabelFromTo(pullbackSystem, "z1/z'0", "z1/z'1", "<*, e2>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "z0/z'0", "z1/z'0", "<e1, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "z0/z'0", "z0/z'1", "<*, e2>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "z0/z'1", "z1/z'1", "<e1, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "z1/z'0", "z1/z'1", "<*, e2>");
         // The following transition is missing in the picture!
-        expectTransitionWithLabelFromTo(pullbackSystem, "z0/z'0", "z1/z'1", "<e1, e2>");
-        expectTransitionWithLabelFromTo(pullbackSystem, "z1/z'1", "z2/z'2", "<e, e>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "z0/z'0", "z1/z'1", "<e1, e2>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "z1/z'1", "z2/z'2", "<e, e>");
         // 5 Idle Transitions
-        expectTransitionWithLabelFromTo(pullbackSystem, "z0/z'0", "z0/z'0", "<*, *>");
-        expectTransitionWithLabelFromTo(pullbackSystem, "z0/z'1", "z0/z'1", "<*, *>");
-        expectTransitionWithLabelFromTo(pullbackSystem, "z1/z'0", "z1/z'0", "<*, *>");
-        expectTransitionWithLabelFromTo(pullbackSystem, "z1/z'1", "z1/z'1", "<*, *>");
-        expectTransitionWithLabelFromTo(pullbackSystem, "z2/z'2", "z2/z'2", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "z0/z'0", "z0/z'0", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "z0/z'1", "z0/z'1", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "z1/z'0", "z1/z'0", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "z1/z'1", "z1/z'1", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "z2/z'2", "z2/z'2", "<*, *>");
     }
 }

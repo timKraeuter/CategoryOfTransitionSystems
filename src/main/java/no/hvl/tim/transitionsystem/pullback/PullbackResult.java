@@ -1,9 +1,6 @@
 package no.hvl.tim.transitionsystem.pullback;
 
-import no.hvl.tim.transitionsystem.State;
-import no.hvl.tim.transitionsystem.TSMorphism;
-import no.hvl.tim.transitionsystem.Transition;
-import no.hvl.tim.transitionsystem.TransitionSystem;
+import no.hvl.tim.transitionsystem.*;
 import no.hvl.tim.transitionsystem.builder.TSMorphismBuilder;
 import no.hvl.tim.transitionsystem.builder.TransitionSystemBuilder;
 import org.apache.commons.lang3.tuple.Pair;
@@ -25,7 +22,42 @@ public class PullbackResult {
     private final TSMorphism m1;
     private final TSMorphism m2;
 
-    public static PullbackResult calculate(Cospan input) {
+    public PullbackResult(final TSMorphism m1, final TSMorphism m2) {
+        // Constraint 2
+        assert m1.getSource() == m2.getSource();
+
+        this.m1 = m1;
+        this.m2 = m2;
+    }
+
+    public static Cospan calcCoordinationInterface(
+            final TransitionSystem ts1,
+            final TransitionSystem ts2,
+            final Map<Transition, Transition> interactions) {
+        if (!interactions.entrySet().stream().allMatch(transPair -> ts1.getTransitions().contains(transPair.getKey())
+                && ts2.getTransitions().contains(transPair.getValue()))) {
+            // TODO better exception.
+            throw new RuntimeException("Interactions must be contained in transition systems!");
+        }
+        final TransitionSystemBuilder coordinationInterfaceBuilder = new TransitionSystemBuilder();
+        final TSMorphismBuilder ts1MappingBuilder = new TSMorphismBuilder().source(ts1);
+        final TSMorphismBuilder ts2MappingBuilder = new TSMorphismBuilder().source(ts2);
+        // Start state
+        final State startState = new State(String.format(
+                COMPOSITE_STATE_NAME_PATTERN,
+                ts1.getStartState().getName(),
+                ts2.getStartState().getName()));
+        coordinationInterfaceBuilder.startState(startState);
+        // Synched transitions
+
+        // Rest
+        // TS not build yet but add mappings later
+        // ts1MappingBuilder.addStateMapping(ts1.getStartState(), startState);
+        // ts2MappingBuilder.addStateMapping(ts2.getStartState(), startState);
+        return null;
+    }
+
+    public static PullbackResult calculate(final Cospan input) {
         final TransitionSystemBuilder pullbackBuilder = new TransitionSystemBuilder();
         final TSMorphismBuilder m1Builder = new TSMorphismBuilder().target(input.getI1().getSource());
         final TSMorphismBuilder m2Builder = new TSMorphismBuilder().target(input.getI2().getSource());
@@ -39,14 +71,15 @@ public class PullbackResult {
         return new PullbackResult(m1Builder.build(), m2Builder.build());
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent") // must be present
     private static void calcPullbackTransitions(
             final Cospan input,
             final Pair<Map<State, State>, Map<State, State>> stateMappings,
             final TransitionSystemBuilder pullbackBuilder,
             final TSMorphismBuilder m1Builder,
             final TSMorphismBuilder m2Builder) {
-        Map<Transition, Transition> m1TransitionMap = new HashMap<>();
-        Map<Transition, Transition> m2TransitionMap = new HashMap<>();
+        final Map<Transition, Transition> m1TransitionMap = new HashMap<>();
+        final Map<Transition, Transition> m2TransitionMap = new HashMap<>();
         for (final Transition i1transition : input.getI1().getSource().getTransitions()) {
             for (final Transition i2transition : input.getI2().getSource().getTransitions()) {
                 // We loop over the product of transitions, which has to be equalized now.
@@ -54,20 +87,20 @@ public class PullbackResult {
                 // Include a transition-pair if they map to the same transition in the cospan.
                 if (input.getI1().mapTransition(i1transition).equals(input.getI2().mapTransition(i2transition))) {
                     // could be made more efficient by iterating once and calculating 2 maps.
-                    State source = pullbackBuilder.getStates().stream()
-                                                  .filter(state -> state.getName().equals(
-                                                          String.format(
-                                                                  COMPOSITE_STATE_NAME_PATTERN,
-                                                                  i1transition.getSource().getName(),
-                                                                  i2transition.getSource().getName())))
-                                                  .findFirst().get(); // has to be present
-                    State target = pullbackBuilder.getStates().stream()
-                                                  .filter(state -> state.getName().equals(
-                                                          String.format(
-                                                                  COMPOSITE_STATE_NAME_PATTERN,
-                                                                  i1transition.getTarget().getName(),
-                                                                  i2transition.getTarget().getName())))
-                                                  .findFirst().get(); // has to be present;
+                    final State source = pullbackBuilder.getStates().stream()
+                            .filter(state -> state.getName().equals(
+                                    String.format(
+                                            COMPOSITE_STATE_NAME_PATTERN,
+                                            i1transition.getSource().getName(),
+                                            i2transition.getSource().getName())))
+                            .findFirst().get(); // has to be present
+                    final State target = pullbackBuilder.getStates().stream()
+                            .filter(state -> state.getName().equals(
+                                    String.format(
+                                            COMPOSITE_STATE_NAME_PATTERN,
+                                            i1transition.getTarget().getName(),
+                                            i2transition.getTarget().getName())))
+                            .findFirst().get(); // has to be present;
                     final Transition pullbackTransition = new Transition(
                             source,
                             target,
@@ -93,8 +126,10 @@ public class PullbackResult {
     private static Pair<Map<State, State>, Map<State, State>> calcPullbackStates(
             final Cospan input,
             final TransitionSystemBuilder pullbackBuilder) {
-        Map<State, State> m1_state_map = new HashMap<>();
-        Map<State, State> m2_state_map = new HashMap<>();
+        boolean foundStartState = false;
+
+        final Map<State, State> m1_state_map = new HashMap<>();
+        final Map<State, State> m2_state_map = new HashMap<>();
         for (final State i1state : input.getI1().getSource().getStates()) {
             for (final State i2state : input.getI2().getSource().getStates()) {
                 // We loop over the product of states, which has to be equalized now.
@@ -110,25 +145,26 @@ public class PullbackResult {
                     pullbackBuilder.addState(pullbackState);
                     m1_state_map.put(pullbackState, i1state);
                     m2_state_map.put(pullbackState, i2state);
+                    // Setting the start state could be made smarter
+                    if (!foundStartState && input.getI1().getSource().getStartState().equals(i1state)
+                            && input.getI2().getSource().getStartState().equals(i2state)) {
+                        foundStartState = true;
+                        pullbackBuilder.startState(pullbackState);
+                    }
                 }
             }
+        }
+        if (!foundStartState) {
+            throw new TransitionSystemException("Start state mappings do not match in pullback calculation!");
         }
         return Pair.of(m1_state_map, m2_state_map);
     }
 
-    public PullbackResult(final TSMorphism m1, final TSMorphism m2) {
-        // Constraint 2
-        assert m1.getSource() == m2.getSource();
-
-        this.m1 = m1;
-        this.m2 = m2;
-    }
-
     public TSMorphism getM1() {
-        return m1;
+        return this.m1;
     }
 
     public TSMorphism getM2() {
-        return m2;
+        return this.m2;
     }
 }

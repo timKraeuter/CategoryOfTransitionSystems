@@ -13,6 +13,13 @@ import java.util.Set;
 public class TransitionSystemBuilder {
     private final Set<State> states = new LinkedHashSet<>();
     private final Set<Transition> transitions = new LinkedHashSet<>();
+    private State startState;
+
+    public TransitionSystemBuilder startState(final State startState) {
+        this.startState = startState;
+        this.addState(startState);
+        return this;
+    }
 
     /**
      * Adds a state to the transition system which is build.
@@ -26,7 +33,7 @@ public class TransitionSystemBuilder {
      * Adds a transition alongside the transitions source and target state
      * to the transition system which is build.
      */
-    public TransitionSystemBuilder addTransition(Transition transition) {
+    public TransitionSystemBuilder addTransition(final Transition transition) {
         this.states.add(transition.getSource());
         this.states.add(transition.getTarget());
 
@@ -40,10 +47,11 @@ public class TransitionSystemBuilder {
     }
 
     public TransitionSystem build() {
-        return new TransitionSystem(this.states, this.transitions);
+        assert this.startState != null;
+        return new TransitionSystem(this.startState, this.states, this.transitions);
     }
 
     public Set<State> getStates() {
-        return states;
+        return this.states;
     }
 }

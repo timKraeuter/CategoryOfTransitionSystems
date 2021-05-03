@@ -1,9 +1,6 @@
 package no.hvl.tim.transitionsystem.builder;
 
-import no.hvl.tim.transitionsystem.State;
-import no.hvl.tim.transitionsystem.TSMorphism;
-import no.hvl.tim.transitionsystem.Transition;
-import no.hvl.tim.transitionsystem.TransitionSystem;
+import no.hvl.tim.transitionsystem.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,10 +11,17 @@ import java.util.Set;
  */
 public class TSMorphismBuilder {
 
-    private TransitionSystem source;
-    private TransitionSystem target;
     private final Map<State, State> stateMapping = new HashMap<>();
     private final Map<Transition, Transition> transitionMapping = new HashMap<>();
+    private TransitionSystem source;
+    private TransitionSystem target;
+
+    private static Transition findIdleTransitionForState(final State stateOfSystem, final TransitionSystem system) {
+        return system.getTransitions().stream()
+                .filter(transition -> transition.getSource().equals(stateOfSystem) && transition.getLabel().equals("*"))
+                .findAny()
+                .orElseThrow(RuntimeException::new);
+    }
 
     public TSMorphismBuilder source(final TransitionSystem source) {
         this.source = source;
@@ -64,7 +68,7 @@ public class TSMorphismBuilder {
         assert this.source != null;
         assert this.target != null;
 
-        final Transition idleTransitionForState = this.findIdleTransitionForState(idleState, this.target);
+        final Transition idleTransitionForState = TSMorphismBuilder.findIdleTransitionForState(idleState, this.target);
         this.addTransitionMapping(from, idleTransitionForState);
         return this;
     }
@@ -72,6 +76,15 @@ public class TSMorphismBuilder {
     public TSMorphism buildWithIdleTransitions() {
         assert this.source != null;
         assert this.target != null;
+        // Automatically map start state to start state if not done yet
+        if (!this.stateMapping.containsKey(this.source.getStartState())) {
+            this.addStateMapping(this.source.getStartState(), this.target.getStartState());
+        } else {
+            final State targetStartState = this.stateMapping.get(this.source.getStartState());
+            if (!this.target.getStartState().equals(targetStartState)) {
+                throw new TransitionSystemException("Start states have to be mapped to start states!");
+            }
+        }
 
         // State mapping has to be total
         assert this.stateMapping.keySet().containsAll(this.source.getStates());
@@ -79,29 +92,22 @@ public class TSMorphismBuilder {
         // Automatically map idle transitions to idle transitions
         this.stateMapping.forEach((sourceState, targetState) ->
                 this.transitionMapping.put(
-                        this.findIdleTransitionForState(sourceState, source),
-                        this.findIdleTransitionForState(targetState, target))
+                        TSMorphismBuilder.findIdleTransitionForState(sourceState, this.source),
+                        TSMorphismBuilder.findIdleTransitionForState(targetState, this.target))
         );
         // Automatically map undefined transitions to idle transitions
         final Set<Transition> mappedTransitions = this.transitionMapping.keySet();
         this.source.getTransitions().stream()
-                   .filter(transition -> !mappedTransitions.contains(transition))
-                   .forEach(unmappedTransition -> {
-                       final Transition idleTranstionInTheTargetSystemState = this.findIdleTransitionForState(
-                               this.stateMapping.get(unmappedTransition.getSource()), target);
-                       this.transitionMapping.put(
-                               unmappedTransition,
-                               idleTranstionInTheTargetSystemState);
-                   });
+                .filter(transition -> !mappedTransitions.contains(transition))
+                .forEach(unmappedTransition -> {
+                    final Transition idleTranstionInTheTargetSystemState = TSMorphismBuilder.findIdleTransitionForState(
+                            this.stateMapping.get(unmappedTransition.getSource()), this.target);
+                    this.transitionMapping.put(
+                            unmappedTransition,
+                            idleTranstionInTheTargetSystemState);
+                });
 
         return new TSMorphism(this.source, this.target, this.stateMapping, this.transitionMapping);
-    }
-
-    private Transition findIdleTransitionForState(final State stateOfSystem, final TransitionSystem system) {
-        return system.getTransitions().stream()
-                     .filter(transition -> transition.getSource().equals(stateOfSystem) && transition.getLabel().equals("*"))
-                     .findAny()
-                     .orElseThrow(RuntimeException::new);
     }
 
     public TSMorphism build() {

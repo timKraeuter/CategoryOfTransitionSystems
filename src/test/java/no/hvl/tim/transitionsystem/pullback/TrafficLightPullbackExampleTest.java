@@ -1,11 +1,7 @@
 package no.hvl.tim.transitionsystem.pullback;
 
 import com.google.common.collect.Sets;
-import no.hvl.tim.transitionsystem.State;
-import no.hvl.tim.transitionsystem.TSMorphism;
-import no.hvl.tim.transitionsystem.Transition;
-import no.hvl.tim.transitionsystem.TransitionSystem;
-import no.hvl.tim.transitionsystem.TransitionSystemTestHelper;
+import no.hvl.tim.transitionsystem.*;
 import no.hvl.tim.transitionsystem.builder.TSMorphismBuilder;
 import no.hvl.tim.transitionsystem.builder.TransitionSystemBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,21 +18,22 @@ class TrafficLightPullbackExampleTest implements TransitionSystemTestHelper {
 
     @BeforeEach
     void setUp() {
-        left = new TransitionSystemBuilder();
-        right = new TransitionSystemBuilder();
-        middle = new TransitionSystemBuilder();
+        this.left = new TransitionSystemBuilder();
+        this.right = new TransitionSystemBuilder();
+        this.middle = new TransitionSystemBuilder();
     }
 
     @Test
     void trafficLight() {
         // Build left side transition system
-        final State go = new State("go");
+        final State cross = new State("cross");
         final State wait = new State("wait");
-        final Transition turn_red = new Transition(go, wait, "turn red");
-        final Transition turn_green = new Transition(wait, go, "turn green");
-        left.addTransition(turn_red);
-        left.addTransition(turn_green);
-        final TransitionSystem left_ts = left.buildWithIdleTransitions();
+        final Transition switch_to_cross = new Transition(wait, cross, "switch to cross");
+        final Transition switch_to_wait = new Transition(cross, wait, "switch to wait");
+        this.left.startState(cross)
+                .addTransition(switch_to_cross)
+                .addTransition(switch_to_wait);
+        final TransitionSystem left_ts = this.left.buildWithIdleTransitions();
 
         // Build right side transition system
         final State red = new State("red");
@@ -47,38 +44,40 @@ class TrafficLightPullbackExampleTest implements TransitionSystemTestHelper {
         final Transition turn_greenTL = new Transition(red_amber, green, "turn green");
         final Transition turn_amber = new Transition(green, amber, "turn amber");
         final Transition turn_redTL = new Transition(amber, red, "turn red");
-        right.addTransition(turn_red_amber);
-        right.addTransition(turn_greenTL);
-        right.addTransition(turn_amber);
-        right.addTransition(turn_redTL);
-        final TransitionSystem right_ts = right.buildWithIdleTransitions();
+        this.right.startState(red)
+                .addTransition(turn_red_amber)
+                .addTransition(turn_greenTL)
+                .addTransition(turn_amber)
+                .addTransition(turn_redTL);
+        final TransitionSystem right_ts = this.right.buildWithIdleTransitions();
 
         // Build middle
-        final State goRed = new State("go/red");
+        final State cross_Red = new State("cross/red");
         final State wait_redAmber = new State("wait/red-amber");
-        final Transition turnRed_turnRedAmber = new Transition(goRed, wait_redAmber, "<turn red, turn green>");
-        final Transition turnGreen_turnRed = new Transition(wait_redAmber, goRed, "<turn green, turn amber>");
-        middle.addTransition(turnRed_turnRedAmber);
-        middle.addTransition(turnGreen_turnRed);
-        final TransitionSystem middle_ts = middle.buildWithIdleTransitions();
+        final Transition stw_turnRedAmber = new Transition(cross_Red, wait_redAmber, "<switch to wait, turn red-amber>");
+        final Transition stc_turnRed = new Transition(wait_redAmber, cross_Red, "<switch to cross, turn red>");
+        this.middle.startState(cross_Red)
+                .addTransition(stw_turnRedAmber)
+                .addTransition(stc_turnRed);
+        final TransitionSystem middle_ts = this.middle.buildWithIdleTransitions();
 
         // Build left morphism
         final TSMorphism left_morphism = new TSMorphismBuilder()
                 .source(left_ts)
                 .target(middle_ts)
-                .addTransitionMapping(turn_red, turnRed_turnRedAmber)
-                .addTransitionMapping(turn_green, turnGreen_turnRed)
+                .addTransitionMapping(switch_to_wait, stw_turnRedAmber)
+                .addTransitionMapping(switch_to_cross, stc_turnRed)
                 .buildWithIdleTransitions();
 
         // Build right morphism
         final TSMorphism right_morphism = new TSMorphismBuilder()
                 .source(right_ts)
                 .target(middle_ts)
-                .addTransitionMapping(turn_red_amber, turnRed_turnRedAmber)
+                .addTransitionMapping(turn_red_amber, stw_turnRedAmber)
                 .addStateMapping(red_amber, wait_redAmber)
                 .addStateMapping(green, wait_redAmber)
                 .addStateMapping(amber, wait_redAmber)
-                .addTransitionMapping(turn_redTL, turnGreen_turnRed)
+                .addTransitionMapping(turn_redTL, stc_turnRed)
                 .buildWithIdleTransitions();
 
         final PullbackResult result = PullbackResult.calculate(new Cospan(left_morphism, right_morphism));
@@ -87,18 +86,18 @@ class TrafficLightPullbackExampleTest implements TransitionSystemTestHelper {
         // Four states with the given names expected
         final TransitionSystem pullbackSystem = result.getM1().getSource();
         assertThat(
-                getStateNamesForTS(pullbackSystem),
-                is(Sets.newHashSet("go/red", "wait/red-amber", "wait/green", "wait/amber")));
+                this.getStateNamesForTS(pullbackSystem),
+                is(Sets.newHashSet("cross/red", "wait/red-amber", "wait/green", "wait/amber")));
         assertThat(pullbackSystem.getTransitions().size(), is(8));
         // 4 Transitions
-        expectTransitionWithLabelFromTo(pullbackSystem, "go/red", "wait/red-amber", "<turn red, turn red-amber>");
-        expectTransitionWithLabelFromTo(pullbackSystem, "wait/red-amber", "wait/green", "<*, turn green>");
-        expectTransitionWithLabelFromTo(pullbackSystem, "wait/green", "wait/amber", "<*, turn amber>");
-        expectTransitionWithLabelFromTo(pullbackSystem, "wait/amber", "go/red", "<turn green, turn red>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "cross/red", "wait/red-amber", "<switch to wait, turn red-amber>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "wait/red-amber", "wait/green", "<*, turn green>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "wait/green", "wait/amber", "<*, turn amber>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "wait/amber", "cross/red", "<switch to cross, turn red>");
         // 4 Idle Transitions
-        expectTransitionWithLabelFromTo(pullbackSystem, "go/red", "go/red", "<*, *>");
-        expectTransitionWithLabelFromTo(pullbackSystem, "wait/red-amber", "wait/red-amber", "<*, *>");
-        expectTransitionWithLabelFromTo(pullbackSystem, "wait/green", "wait/green", "<*, *>");
-        expectTransitionWithLabelFromTo(pullbackSystem, "wait/amber", "wait/amber", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "cross/red", "cross/red", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "wait/red-amber", "wait/red-amber", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "wait/green", "wait/green", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "wait/amber", "wait/amber", "<*, *>");
     }
 }

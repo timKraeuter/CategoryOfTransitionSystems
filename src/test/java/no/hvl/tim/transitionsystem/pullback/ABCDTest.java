@@ -1,10 +1,6 @@
 package no.hvl.tim.transitionsystem.pullback;
 
-import no.hvl.tim.transitionsystem.State;
-import no.hvl.tim.transitionsystem.TSMorphism;
-import no.hvl.tim.transitionsystem.Transition;
-import no.hvl.tim.transitionsystem.TransitionSystem;
-import no.hvl.tim.transitionsystem.TransitionSystemTestHelper;
+import no.hvl.tim.transitionsystem.*;
 import no.hvl.tim.transitionsystem.builder.TSMorphismBuilder;
 import no.hvl.tim.transitionsystem.builder.TransitionSystemBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,9 +20,9 @@ class ABCDTest implements TransitionSystemTestHelper {
 
     @BeforeEach
     void setUp() {
-        left = new TransitionSystemBuilder();
-        right = new TransitionSystemBuilder();
-        middle = new TransitionSystemBuilder();
+        this.left = new TransitionSystemBuilder();
+        this.right = new TransitionSystemBuilder();
+        this.middle = new TransitionSystemBuilder();
     }
 
     @Test
@@ -37,9 +33,10 @@ class ABCDTest implements TransitionSystemTestHelper {
         final State cl = new State("c");
         final Transition abl = new Transition(a, bl, "ab");
         final Transition blcl = new Transition(bl, cl, "bc");
-        left.addTransition(abl);
-        left.addTransition(blcl);
-        final TransitionSystem left_ts = left.buildWithIdleTransitions();
+        this.left.startState(a)
+                .addTransition(abl)
+                .addTransition(blcl);
+        final TransitionSystem left_ts = this.left.buildWithIdleTransitions();
 
         // Build right side transition system
         final State br = new State("b");
@@ -47,16 +44,18 @@ class ABCDTest implements TransitionSystemTestHelper {
         final State d = new State("d");
         final Transition brcr = new Transition(br, cr, "bc");
         final Transition crd = new Transition(cr, d, "cd");
-        right.addTransition(brcr);
-        right.addTransition(crd);
-        final TransitionSystem right_ts = right.buildWithIdleTransitions();
+        this.right.startState(br)
+                .addTransition(brcr)
+                .addTransition(crd);
+        final TransitionSystem right_ts = this.right.buildWithIdleTransitions();
 
         // Build middle
         final State bm = new State("bm");
         final State cm = new State("cm");
         final Transition bmcm = new Transition(bm, cm, "bmcm");
-        middle.addTransition(bmcm);
-        final TransitionSystem middle_ts = middle.buildWithIdleTransitions();
+        this.middle.startState(bm)
+                .addTransition(bmcm);
+        final TransitionSystem middle_ts = this.middle.buildWithIdleTransitions();
 
         // Build left morphism
         final TSMorphism left_morphism = new TSMorphismBuilder()
@@ -89,9 +88,10 @@ class ABCDTest implements TransitionSystemTestHelper {
         final State d = new State("d");
         final Transition blcl = new Transition(bl, cl, "bc");
         final Transition cldl = new Transition(cl, d, "cd");
-        left.addTransition(blcl);
-        left.addTransition(cldl);
-        final TransitionSystem left_ts = left.buildWithIdleTransitions();
+        this.left.startState(bl)
+                .addTransition(blcl)
+                .addTransition(cldl);
+        final TransitionSystem left_ts = this.left.buildWithIdleTransitions();
 
         // Build right side transition system
         final State cr = new State("c");
@@ -99,16 +99,18 @@ class ABCDTest implements TransitionSystemTestHelper {
         final State er = new State("e");
         final Transition crdr = new Transition(cr, dr, "cd");
         final Transition drer = new Transition(dr, er, "de");
-        right.addTransition(crdr);
-        right.addTransition(drer);
-        final TransitionSystem right_ts = right.buildWithIdleTransitions();
+        this.right.startState(cr)
+                .addTransition(crdr)
+                .addTransition(drer);
+        final TransitionSystem right_ts = this.right.buildWithIdleTransitions();
 
         // Build middle
         final State cm = new State("cm");
         final State dm = new State("dm");
         final Transition cmdm = new Transition(cm, dm, "cd");
-        middle.addTransition(cmdm);
-        final TransitionSystem middle_ts = middle.buildWithIdleTransitions();
+        this.middle.startState(cm)
+                .addTransition(cmdm);
+        final TransitionSystem middle_ts = this.middle.buildWithIdleTransitions();
 
         // Build left morphism
         final TSMorphism left_morphism = new TSMorphismBuilder()
@@ -131,7 +133,7 @@ class ABCDTest implements TransitionSystemTestHelper {
         assertThat(result.getM1().getSource(), is(result.getM2().getSource()));
         // Four states with the given names expected
     }
-    
+
     @Test
     void abcdCombined() {
         // Build left side transition system
@@ -140,9 +142,10 @@ class ABCDTest implements TransitionSystemTestHelper {
         final State cl = new State("c");
         final Transition abl = new Transition(a, bl, "ab");
         final Transition blcl = new Transition(bl, cl, "bc");
-        left.addTransition(abl);
-        left.addTransition(blcl);
-        final TransitionSystem left_ts = left.buildWithIdleTransitions();
+        this.left.startState(a)
+                .addTransition(abl)
+                .addTransition(blcl);
+        final TransitionSystem left_ts = this.left.buildWithIdleTransitions();
 
         // Build right side transition system
         final State br = new State("b");
@@ -150,16 +153,18 @@ class ABCDTest implements TransitionSystemTestHelper {
         final State d = new State("d");
         final Transition brcr = new Transition(br, cr, "bc");
         final Transition crd = new Transition(cr, d, "cd");
-        right.addTransition(brcr);
-        right.addTransition(crd);
-        final TransitionSystem right_ts = right.buildWithIdleTransitions();
+        this.right.startState(br)
+                .addTransition(brcr)
+                .addTransition(crd);
+        final TransitionSystem right_ts = this.right.buildWithIdleTransitions();
 
         // Build middle
         final State bm = new State("bm");
         final State cm = new State("cm");
         final Transition bmcm = new Transition(bm, cm, "bmcm");
-        middle.addTransition(bmcm);
-        final TransitionSystem middle_ts = middle.buildWithIdleTransitions();
+        this.middle.startState(bm)
+                .addTransition(bmcm);
+        final TransitionSystem middle_ts = this.middle.buildWithIdleTransitions();
 
         // Build left morphism
         final TSMorphism left_morphism = new TSMorphismBuilder()
@@ -182,6 +187,7 @@ class ABCDTest implements TransitionSystemTestHelper {
         // Right side pullback
         final PullbackResult rightSide = this.getRightSide();
 
+        // TODO not similar to the by hand one. D/E is missing
         final PullbackResult finalResult = PullbackResult.calculate(new Cospan(leftSide.getM2(), rightSide.getM1()));
     }
 
@@ -194,9 +200,10 @@ class ABCDTest implements TransitionSystemTestHelper {
         final State d = new State("d");
         final Transition blcl = new Transition(bl, cl, "bc");
         final Transition cldl = new Transition(cl, d, "cd");
-        left.addTransition(blcl);
-        left.addTransition(cldl);
-        final TransitionSystem left_ts = left.buildWithIdleTransitions();
+        this.left.startState(bl)
+                .addTransition(blcl)
+                .addTransition(cldl);
+        final TransitionSystem left_ts = this.left.buildWithIdleTransitions();
 
         // Build right side transition system
         final State cr = new State("c");
@@ -204,16 +211,18 @@ class ABCDTest implements TransitionSystemTestHelper {
         final State er = new State("e");
         final Transition crdr = new Transition(cr, dr, "cd");
         final Transition drer = new Transition(dr, er, "de");
-        right.addTransition(crdr);
-        right.addTransition(drer);
-        final TransitionSystem right_ts = right.buildWithIdleTransitions();
+        this.right.startState(cr)
+                .addTransition(crdr)
+                .addTransition(drer);
+        final TransitionSystem right_ts = this.right.buildWithIdleTransitions();
 
         // Build middle
         final State cm = new State("cm");
         final State dm = new State("dm");
         final Transition cmdm = new Transition(cm, dm, "cd");
-        middle.addTransition(cmdm);
-        final TransitionSystem middle_ts = middle.buildWithIdleTransitions();
+        this.middle.startState(cm)
+                .addTransition(cmdm);
+        final TransitionSystem middle_ts = this.middle.buildWithIdleTransitions();
 
         // Build left morphism
         final TSMorphism left_morphism = new TSMorphismBuilder()
@@ -235,6 +244,7 @@ class ABCDTest implements TransitionSystemTestHelper {
         // source is the same system
         assertThat(result.getM1().getSource(), is(result.getM2().getSource()));
         // Four states with the given names expected
+        // TODO there is no d/e here
         return result;
     }
 
@@ -248,10 +258,11 @@ class ABCDTest implements TransitionSystemTestHelper {
         final Transition abl_bbl = new Transition(abl, bbl, "<ab, *>");
         final Transition bbl_ccl = new Transition(bbl, ccl, "<bc, bc>");
         final Transition ccl_cdl = new Transition(ccl, cdl, "<*, cd>");
-        left.addTransition(abl_bbl);
-        left.addTransition(bbl_ccl);
-        left.addTransition(ccl_cdl);
-        final TransitionSystem left_ts = left.buildWithIdleTransitions();
+        this.left.startState(abl)
+                .addTransition(abl_bbl)
+                .addTransition(bbl_ccl)
+                .addTransition(ccl_cdl);
+        final TransitionSystem left_ts = this.left.buildWithIdleTransitions();
 
         // Build right side transition system
         final State bcr = new State("B/C");
@@ -261,10 +272,11 @@ class ABCDTest implements TransitionSystemTestHelper {
         final Transition bcr_cr = new Transition(bcr, ccr, "<bc, *>");
         final Transition ccr_ddr = new Transition(ccr, ddr, "<cd, cd>");
         final Transition ddr_der = new Transition(ddr, der, "<*, de>");
-        right.addTransition(bcr_cr);
-        right.addTransition(ccr_ddr);
-        right.addTransition(ddr_der);
-        final TransitionSystem right_ts = right.buildWithIdleTransitions();
+        this.right.startState(bcr)
+                .addTransition(bcr_cr)
+                .addTransition(ccr_ddr)
+                .addTransition(ddr_der);
+        final TransitionSystem right_ts = this.right.buildWithIdleTransitions();
 
         // Build middle
         final State bm = new State("B");
@@ -272,9 +284,10 @@ class ABCDTest implements TransitionSystemTestHelper {
         final State dm = new State("D");
         final Transition bcm = new Transition(bm, cm, "bc");
         final Transition cdm = new Transition(cm, dm, "cd");
-        middle.addTransition(bcm);
-        middle.addTransition(cdm);
-        final TransitionSystem middle_ts = middle.buildWithIdleTransitions();
+        this.middle.startState(bm)
+                .addTransition(bcm)
+                .addTransition(cdm);
+        final TransitionSystem middle_ts = this.middle.buildWithIdleTransitions();
 
         // Build left morphism
         final TSMorphism left_morphism = new TSMorphismBuilder()
