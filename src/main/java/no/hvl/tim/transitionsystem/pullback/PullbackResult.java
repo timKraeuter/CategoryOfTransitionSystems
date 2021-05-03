@@ -175,11 +175,8 @@ public class PullbackResult {
             ts2StateMapping.put(ts2State, compositeState);
             coordinationInterfaceBuilder.addState(compositeState);
         }
-        if (ts1EquivalentState != null && ts2EquivalentState != null) {
-            if (!ts1EquivalentState.equals(ts2EquivalentState)) {
-                // TODO: Give more information.
-                throw new TransitionSystemException("Incompatible mapping detected!");
-            }
+        if (ts1EquivalentState != null && ts2EquivalentState != null && !ts1EquivalentState.equals(ts2EquivalentState)) {
+            throw new TransitionSystemException("Incompatible mapping detected!");
         }
         if (ts1EquivalentState != null && ts2EquivalentState == null) {
             ts2StateMapping.put(ts2State, ts1EquivalentState);
