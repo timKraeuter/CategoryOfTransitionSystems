@@ -14,24 +14,28 @@ public class State {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     @Override
     public String toString() {
-        return name;
+        return this.name;
     }
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (!(o instanceof State)) return false;
-        final State state = (State) o;
-        return Objects.equal(getName(), state.getName());
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof State)) {
+            return false;
+        }
+        final var state = (State) o;
+        return Objects.equal(this.getName(), state.getName());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getName());
+        return Objects.hashCode(this.getName());
     }
 }
