@@ -11,7 +11,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
- * No Real tests just playing around with the synchronisation when 3 systems are targeted.
+ * Playing around with pairwise coordination of 3 systems.
  */
 class ABCDTest implements TransitionSystemTestHelper {
 
@@ -75,23 +75,7 @@ class ABCDTest implements TransitionSystemTestHelper {
                 .buildWithIdleTransitions();
 
         final PullbackResult result = PullbackResult.calculate(new Cospan(left_morphism, right_morphism));
-        // source is the same system
-        assertThat(result.getM1().getSource(), is(result.getM2().getSource()));
-        // Four states with the given names expected
-        final TransitionSystem pullbackSystem = result.getM1().getSource();
-        assertThat(
-                this.getStateNamesForTS(pullbackSystem),
-                is(Sets.newHashSet("A/B", "B/B", "C/C", "C/D")));
-        assertThat(pullbackSystem.getTransitions().size(), is(7));
-        // 3 Transitions
-        this.expectTransitionWithLabelFromTo(pullbackSystem, "A/B", "B/B", "<ab, *>");
-        this.expectTransitionWithLabelFromTo(pullbackSystem, "B/B", "C/C", "<bc, bc>");
-        this.expectTransitionWithLabelFromTo(pullbackSystem, "C/C", "C/D", "<*, cd>");
-        // 4 Idle Transitions
-        this.expectTransitionWithLabelFromTo(pullbackSystem, "A/B", "A/B", "<*, *>");
-        this.expectTransitionWithLabelFromTo(pullbackSystem, "B/B", "B/B", "<*, *>");
-        this.expectTransitionWithLabelFromTo(pullbackSystem, "C/C", "C/C", "<*, *>");
-        this.expectTransitionWithLabelFromTo(pullbackSystem, "C/D", "C/D", "<*, *>");
+        checkABCPullback(result);
     }
 
     @Test

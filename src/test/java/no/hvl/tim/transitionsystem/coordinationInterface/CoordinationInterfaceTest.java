@@ -91,4 +91,61 @@ class CoordinationInterfaceTest implements TransitionSystemTestHelper {
         final PullbackResult pullbackResult = PullbackResult.calculate(coordinatedTSs);
         this.checkTLPullback(pullbackResult);
     }
+
+    @Test
+    void calcCoordinationInterfaceABC() {
+
+        // Build left side transition system
+        final State a = new State("A");
+        final State bl = new State("B");
+        final State cl = new State("C");
+        final Transition abl = new Transition(a, bl, "ab");
+        final Transition blcl = new Transition(bl, cl, "bc");
+        this.left.startState(a)
+                .addTransition(abl)
+                .addTransition(blcl);
+        final TransitionSystem left_ts = this.left.buildWithIdleTransitions();
+
+        // Build right side transition system
+        final State br = new State("B");
+        final State cr = new State("C");
+        final State d = new State("D");
+        final Transition brcr = new Transition(br, cr, "bc");
+        final Transition crd = new Transition(cr, d, "cd");
+        this.right.startState(br)
+                .addTransition(brcr)
+                .addTransition(crd);
+        final TransitionSystem right_ts = this.right.buildWithIdleTransitions();
+
+        // Need a Map with order, so we do not get undeterministic behavior.
+        final Map<Transition, Transition> coordinationsPairs = new LinkedHashMap<>();
+        coordinationsPairs.put(blcl, brcr);
+
+        final Cospan coordinatedTSs = PullbackResult.calcCoordinationInterface(left_ts, right_ts, coordinationsPairs);
+        final TransitionSystem coordinationSystem = coordinatedTSs.getI1().getTarget();
+        assertThat(
+                this.getStateNamesForTS(coordinationSystem),
+                is(Sets.newHashSet("A/B", "C/C")));
+        // 1 Transitions (and 2 idle transitions)
+        assertThat(coordinationSystem.getTransitions().size(), is(3));
+        this.expectTransitionWithLabelFromTo(
+                coordinationSystem,
+                "A/B",
+                "C/C",
+                "<bc, bc>");
+        // 2 Idle transitions
+        this.expectTransitionWithLabelFromTo(
+                coordinationSystem,
+                "A/B",
+                "A/B",
+                "*");
+        this.expectTransitionWithLabelFromTo(
+                coordinationSystem,
+                "C/C",
+                "C/C",
+                "*");
+
+        final PullbackResult result = PullbackResult.calculate(coordinatedTSs);
+        checkABCPullback(result);
+    }
 }

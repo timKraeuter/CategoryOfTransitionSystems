@@ -65,4 +65,26 @@ public interface TransitionSystemTestHelper {
         this.expectTransitionWithLabelFromTo(pullbackSystem, "green/wait", "green/wait", "<*, *>");
         this.expectTransitionWithLabelFromTo(pullbackSystem, "amber/wait", "amber/wait", "<*, *>");
     }
+
+
+
+    default void checkABCPullback(PullbackResult result) {
+        // source is the same system
+        assertThat(result.getM1().getSource(), is(result.getM2().getSource()));
+        // Four states with the given names expected
+        final TransitionSystem pullbackSystem = result.getM1().getSource();
+        assertThat(
+                this.getStateNamesForTS(pullbackSystem),
+                is(Sets.newHashSet("A/B", "B/B", "C/C", "C/D")));
+        assertThat(pullbackSystem.getTransitions().size(), is(7));
+        // 3 Transitions
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "A/B", "B/B", "<ab, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "B/B", "C/C", "<bc, bc>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "C/C", "C/D", "<*, cd>");
+        // 4 Idle Transitions
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "A/B", "A/B", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "B/B", "B/B", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "C/C", "C/C", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "C/D", "C/D", "<*, *>");
+    }
 }
