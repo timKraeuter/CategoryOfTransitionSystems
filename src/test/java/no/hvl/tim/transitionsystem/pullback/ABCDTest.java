@@ -1,5 +1,6 @@
 package no.hvl.tim.transitionsystem.pullback;
 
+import com.google.common.collect.Sets;
 import no.hvl.tim.transitionsystem.*;
 import no.hvl.tim.transitionsystem.builder.TSMorphismBuilder;
 import no.hvl.tim.transitionsystem.builder.TransitionSystemBuilder;
@@ -28,9 +29,9 @@ class ABCDTest implements TransitionSystemTestHelper {
     @Test
     void abc() {
         // Build left side transition system
-        final State a = new State("a");
-        final State bl = new State("b");
-        final State cl = new State("c");
+        final State a = new State("A");
+        final State bl = new State("B");
+        final State cl = new State("C");
         final Transition abl = new Transition(a, bl, "ab");
         final Transition blcl = new Transition(bl, cl, "bc");
         this.left.startState(a)
@@ -39,9 +40,9 @@ class ABCDTest implements TransitionSystemTestHelper {
         final TransitionSystem left_ts = this.left.buildWithIdleTransitions();
 
         // Build right side transition system
-        final State br = new State("b");
-        final State cr = new State("c");
-        final State d = new State("d");
+        final State br = new State("B");
+        final State cr = new State("C");
+        final State d = new State("D");
         final Transition brcr = new Transition(br, cr, "bc");
         final Transition crd = new Transition(cr, d, "cd");
         this.right.startState(br)
@@ -78,14 +79,27 @@ class ABCDTest implements TransitionSystemTestHelper {
         assertThat(result.getM1().getSource(), is(result.getM2().getSource()));
         // Four states with the given names expected
         final TransitionSystem pullbackSystem = result.getM1().getSource();
+        assertThat(
+                this.getStateNamesForTS(pullbackSystem),
+                is(Sets.newHashSet("A/B", "B/B", "C/C", "C/D")));
+        assertThat(pullbackSystem.getTransitions().size(), is(7));
+        // 3 Transitions
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "A/B", "B/B", "<ab, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "B/B", "C/C", "<bc, bc>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "C/C", "C/D", "<*, cd>");
+        // 4 Idle Transitions
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "A/B", "A/B", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "B/B", "B/B", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "C/C", "C/C", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "C/D", "C/D", "<*, *>");
     }
 
     @Test
     void bcd() {
         // Build left side transition system
-        final State bl = new State("b");
-        final State cl = new State("c");
-        final State d = new State("d");
+        final State bl = new State("B");
+        final State cl = new State("C");
+        final State d = new State("D");
         final Transition blcl = new Transition(bl, cl, "bc");
         final Transition cldl = new Transition(cl, d, "cd");
         this.left.startState(bl)
@@ -94,9 +108,9 @@ class ABCDTest implements TransitionSystemTestHelper {
         final TransitionSystem left_ts = this.left.buildWithIdleTransitions();
 
         // Build right side transition system
-        final State cr = new State("c");
-        final State dr = new State("d");
-        final State er = new State("e");
+        final State cr = new State("C");
+        final State dr = new State("D");
+        final State er = new State("E");
         final Transition crdr = new Transition(cr, dr, "cd");
         final Transition drer = new Transition(dr, er, "de");
         this.right.startState(cr)
@@ -132,14 +146,28 @@ class ABCDTest implements TransitionSystemTestHelper {
         // source is the same system
         assertThat(result.getM1().getSource(), is(result.getM2().getSource()));
         // Four states with the given names expected
+        final TransitionSystem pullbackSystem = result.getM1().getSource();
+        assertThat(
+                this.getStateNamesForTS(pullbackSystem),
+                is(Sets.newHashSet("B/C", "C/C", "D/D", "D/E")));
+        assertThat(pullbackSystem.getTransitions().size(), is(7));
+        // 3 Transitions
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "B/C", "C/C", "<bc, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "C/C", "D/D", "<cd, cd>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "D/D", "D/E", "<*, de>");
+        // 4 Idle Transitions
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "B/C", "B/C", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "C/C", "C/C", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "D/D", "D/D", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "D/E", "D/E", "<*, *>");
     }
 
     @Test
     void abcdCombined() {
         // Build left side transition system
-        final State a = new State("a");
-        final State bl = new State("b");
-        final State cl = new State("c");
+        final State a = new State("A");
+        final State bl = new State("B");
+        final State cl = new State("C");
         final Transition abl = new Transition(a, bl, "ab");
         final Transition blcl = new Transition(bl, cl, "bc");
         this.left.startState(a)
@@ -148,9 +176,9 @@ class ABCDTest implements TransitionSystemTestHelper {
         final TransitionSystem left_ts = this.left.buildWithIdleTransitions();
 
         // Build right side transition system
-        final State br = new State("b");
-        final State cr = new State("c");
-        final State d = new State("d");
+        final State br = new State("B");
+        final State cr = new State("C");
+        final State d = new State("D");
         final Transition brcr = new Transition(br, cr, "bc");
         final Transition crd = new Transition(cr, d, "cd");
         this.right.startState(br)
@@ -195,9 +223,9 @@ class ABCDTest implements TransitionSystemTestHelper {
         this.setUp();
 
         // Build left side transition system
-        final State bl = new State("b");
-        final State cl = new State("c");
-        final State d = new State("d");
+        final State bl = new State("B");
+        final State cl = new State("C");
+        final State d = new State("D");
         final Transition blcl = new Transition(bl, cl, "bc");
         final Transition cldl = new Transition(cl, d, "cd");
         this.left.startState(bl)
@@ -206,9 +234,9 @@ class ABCDTest implements TransitionSystemTestHelper {
         final TransitionSystem left_ts = this.left.buildWithIdleTransitions();
 
         // Build right side transition system
-        final State cr = new State("c");
-        final State dr = new State("d");
-        final State er = new State("e");
+        final State cr = new State("C");
+        final State dr = new State("D");
+        final State er = new State("E");
         final Transition crdr = new Transition(cr, dr, "cd");
         final Transition drer = new Transition(dr, er, "de");
         this.right.startState(cr)
@@ -312,5 +340,20 @@ class ABCDTest implements TransitionSystemTestHelper {
         assertThat(result.getM1().getSource(), is(result.getM2().getSource()));
         // Four states with the given names expected
         final TransitionSystem pullbackSystem = result.getM1().getSource();
+        assertThat(
+                this.getStateNamesForTS(pullbackSystem),
+                is(Sets.newHashSet("A/B/B/C", "B/B/B/C", "C/C/C/C", "C/D/D/D", "C/D/D/E")));
+        assertThat(pullbackSystem.getTransitions().size(), is(9));
+        // 4 Transitions
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "A/B/B/C", "B/B/B/C", "<<ab, *>, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "B/B/B/C", "C/C/C/C", "<<bc, bc>, <bc, *>>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "C/C/C/C", "C/D/D/D", "<<*, cd>, <cd, cd>>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "C/D/D/D", "C/D/D/E", "<*, <*, de>>");
+        // 5 Idle Transitions
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "A/B/B/C", "A/B/B/C", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "B/B/B/C", "B/B/B/C", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "C/C/C/C", "C/C/C/C", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "C/D/D/D", "C/D/D/D", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "C/D/D/E", "C/D/D/E", "<*, *>");
     }
 }
