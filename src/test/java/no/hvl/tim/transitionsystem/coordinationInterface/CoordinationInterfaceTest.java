@@ -87,5 +87,8 @@ class CoordinationInterfaceTest implements TransitionSystemTestHelper {
 
         this.expectStateMapping(coordinatedTSs.getI2(), "cross", "red/cross");
         this.expectStateMapping(coordinatedTSs.getI2(), "wait", "red-amber/wait");
+
+        final PullbackResult pullbackResult = PullbackResult.calculate(coordinatedTSs);
+        this.checkTLPullback(pullbackResult);
     }
 }

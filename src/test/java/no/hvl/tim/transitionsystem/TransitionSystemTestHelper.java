@@ -1,7 +1,13 @@
 package no.hvl.tim.transitionsystem;
 
+import com.google.common.collect.Sets;
+import no.hvl.tim.transitionsystem.pullback.PullbackResult;
+
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public interface TransitionSystemTestHelper {
 
@@ -37,5 +43,26 @@ public interface TransitionSystemTestHelper {
                                 && stateStateEntry.getValue().getName().equals(toStateName))
                 .findAny()
                 .orElseThrow(RuntimeException::new);
+    }
+
+    default void checkTLPullback(PullbackResult result) {
+        // source is the same system
+        assertThat(result.getM1().getSource(), is(result.getM2().getSource()));
+        // Four states with the given names expected
+        final TransitionSystem pullbackSystem = result.getM1().getSource();
+        assertThat(
+                this.getStateNamesForTS(pullbackSystem),
+                is(Sets.newHashSet("red/cross", "red-amber/wait", "green/wait", "amber/wait")));
+        assertThat(pullbackSystem.getTransitions().size(), is(8));
+        // 4 Transitions
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "red/cross", "red-amber/wait", "<turn red-amber, switch to wait>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "red-amber/wait", "green/wait", "<turn green, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "green/wait", "amber/wait", "<turn amber, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "amber/wait", "red/cross", "<turn red, switch to cross>");
+        // 4 Idle Transitions
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "red/cross", "red/cross", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "red-amber/wait", "red-amber/wait", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "green/wait", "green/wait", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "amber/wait", "amber/wait", "<*, *>");
     }
 }
