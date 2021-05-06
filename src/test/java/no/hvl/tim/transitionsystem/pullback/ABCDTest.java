@@ -143,6 +143,10 @@ class ABCDTest implements TransitionSystemTestHelper {
                 .buildWithIdleTransitions();
 
         final PullbackResult result = PullbackResult.calculate(new Cospan(left_morphism, right_morphism));
+        checkCDEPullback(result);
+    }
+
+    private void checkCDEPullback(PullbackResult result) {
         // source is the same system
         assertThat(result.getM1().getSource(), is(result.getM2().getSource()));
         // Four states with the given names expected
@@ -215,8 +219,23 @@ class ABCDTest implements TransitionSystemTestHelper {
         // Right side pullback
         final PullbackResult rightSide = this.getRightSide();
 
-        // TODO not similar to the by hand one. D/E is missing
         final PullbackResult finalResult = PullbackResult.calculate(new Cospan(leftSide.getM2(), rightSide.getM1()));
+        final TransitionSystem pullbackSystem = finalResult.getM1().getSource();
+        assertThat(
+                this.getStateNamesForTS(pullbackSystem),
+                is(Sets.newHashSet("A/B/B/C", "B/B/B/C", "C/C/C/C", "C/D/D/D", "C/D/D/E")));
+        assertThat(pullbackSystem.getTransitions().size(), is(9));
+        // 4 Transitions
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "A/B/B/C", "B/B/B/C", "<<ab, *>, <*, *>>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "B/B/B/C", "C/C/C/C", "<<bc, bc>, <bc, *>>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "C/C/C/C", "C/D/D/D", "<<*, cd>, <cd, cd>>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "C/D/D/D", "C/D/D/E", "<<*, *>, <*, de>>");
+        // 5 Idle Transitions
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "A/B/B/C", "A/B/B/C", "<<*, *>, <*, *>>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "B/B/B/C", "B/B/B/C", "<<*, *>, <*, *>>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "C/C/C/C", "C/C/C/C", "<<*, *>, <*, *>>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "C/D/D/D", "C/D/D/D", "<<*, *>, <*, *>>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "C/D/D/E", "C/D/D/E", "<<*, *>, <*, *>>");
     }
 
     private PullbackResult getRightSide() {
@@ -269,10 +288,7 @@ class ABCDTest implements TransitionSystemTestHelper {
                 .buildWithIdleTransitions();
 
         final PullbackResult result = PullbackResult.calculate(new Cospan(left_morphism, right_morphism));
-        // source is the same system
-        assertThat(result.getM1().getSource(), is(result.getM2().getSource()));
-        // Four states with the given names expected
-        // TODO there is no d/e here
+        checkCDEPullback(result);
         return result;
     }
 
@@ -336,6 +352,10 @@ class ABCDTest implements TransitionSystemTestHelper {
                 .buildWithIdleTransitions();
 
         final PullbackResult result = PullbackResult.calculate(new Cospan(left_morphism, right_morphism));
+        checkABCDPullback(result);
+    }
+
+    private void checkABCDPullback(PullbackResult result) {
         // source is the same system
         assertThat(result.getM1().getSource(), is(result.getM2().getSource()));
         // Four states with the given names expected
