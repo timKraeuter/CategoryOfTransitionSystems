@@ -80,21 +80,26 @@ class OtherPullbackExampleTest implements TransitionSystemTestHelper {
         final TransitionSystem pullbackSystem = result.getM1().getSource();
         assertThat(
                 this.getStateNamesForTS(pullbackSystem),
-                is(Sets.newHashSet("z0/z'0", "z1/z'0", "z0/z'1", "z1/z'1", "z2/z'2")));
+                is(Sets.newHashSet(
+                        "(z0, z'0)",
+                        "(z1, z'0)",
+                        "(z0, z'1)",
+                        "(z1, z'1)",
+                        "(z2, z'2)")));
         assertThat(pullbackSystem.getTransitions().size(), is(11));
         // 6 Transitions
-        this.expectTransitionWithLabelFromTo(pullbackSystem, "z0/z'0", "z1/z'0", "<e1, *>");
-        this.expectTransitionWithLabelFromTo(pullbackSystem, "z0/z'0", "z0/z'1", "<*, e2>");
-        this.expectTransitionWithLabelFromTo(pullbackSystem, "z0/z'1", "z1/z'1", "<e1, *>");
-        this.expectTransitionWithLabelFromTo(pullbackSystem, "z1/z'0", "z1/z'1", "<*, e2>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "(z0, z'0)", "(z1, z'0)", "<e1, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "(z0, z'0)", "(z0, z'1)", "<*, e2>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "(z0, z'1)", "(z1, z'1)", "<e1, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "(z1, z'0)", "(z1, z'1)", "<*, e2>");
         // The following transition is missing in the picture!
-        this.expectTransitionWithLabelFromTo(pullbackSystem, "z0/z'0", "z1/z'1", "<e1, e2>");
-        this.expectTransitionWithLabelFromTo(pullbackSystem, "z1/z'1", "z2/z'2", "<e, e>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "(z0, z'0)", "(z1, z'1)", "<e1, e2>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "(z1, z'1)", "(z2, z'2)", "<e, e>");
         // 5 Idle Transitions
-        this.expectTransitionWithLabelFromTo(pullbackSystem, "z0/z'0", "z0/z'0", "<*, *>");
-        this.expectTransitionWithLabelFromTo(pullbackSystem, "z0/z'1", "z0/z'1", "<*, *>");
-        this.expectTransitionWithLabelFromTo(pullbackSystem, "z1/z'0", "z1/z'0", "<*, *>");
-        this.expectTransitionWithLabelFromTo(pullbackSystem, "z1/z'1", "z1/z'1", "<*, *>");
-        this.expectTransitionWithLabelFromTo(pullbackSystem, "z2/z'2", "z2/z'2", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "(z0, z'0)", "(z0, z'0)", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "(z0, z'1)", "(z0, z'1)", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "(z1, z'0)", "(z1, z'0)", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "(z1, z'1)", "(z1, z'1)", "<*, *>");
+        this.expectTransitionWithLabelFromTo(pullbackSystem, "(z2, z'2)", "(z2, z'2)", "<*, *>");
     }
 }

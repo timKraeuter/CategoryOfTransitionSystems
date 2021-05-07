@@ -69,21 +69,21 @@ class PullbackResultTest implements TransitionSystemTestHelper {
         // System has two states and transitions
         final TransitionSystem resultSystem = result.getM1().getSource();
         // State names have to be the following. Or should state names come from the synchronization?
-        assertThat(this.getStateNamesForTS(resultSystem), is(Sets.newHashSet("l1/r1", "l2/r1")));
+        assertThat(this.getStateNamesForTS(resultSystem), is(Sets.newHashSet("(l1, r1)", "(l2, r1)")));
         assertThat(resultSystem.getTransitions().size(), is(2));
         final Transition trans1 = this.getTransitionForLabel(resultSystem, "<l2, r1>");
         final Transition trans2 = this.getTransitionForLabel(resultSystem, "<l1, r1>");
         // Check loop
-        assertThat(trans1.getSource().getName(), is("l2/r1"));
+        assertThat(trans1.getSource().getName(), is("(l2, r1)"));
         assertThat(trans1.getSource(), is(trans1.getTarget()));
         // Check normal transition
-        assertThat(trans2.getSource().getName(), is("l1/r1"));
-        assertThat(trans2.getTarget().getName(), is("l2/r1"));
+        assertThat(trans2.getSource().getName(), is("(l1, r1)"));
+        assertThat(trans2.getTarget().getName(), is("(l2, r1)"));
 
-        assertThat(resultSystem.toString(), is("States:[l2/r1, l1/r1]\n" +
+        assertThat(resultSystem.toString(), is("States:[(l2, r1), (l1, r1)]\n" +
                 "Transitions:\n" +
-                "l1/r1 --<l1, r1>--> l2/r1,\n" +
-                "l2/r1 --<l2, r1>--> l2/r1"));
+                "(l1, r1) --<l1, r1>--> (l2, r1),\n" +
+                "(l2, r1) --<l2, r1>--> (l2, r1)"));
     }
 
     @Test
@@ -141,29 +141,29 @@ class PullbackResultTest implements TransitionSystemTestHelper {
         // System has two states and transitions
         final TransitionSystem resultSystem = result.getM1().getSource();
         // State names have to be the following. Or should state names come from the synchronization?
-        assertThat(this.getStateNamesForTS(resultSystem), is(Sets.newHashSet("1/2", "2/2", "3/3", "3/4")));
+        assertThat(this.getStateNamesForTS(resultSystem), is(Sets.newHashSet("(1, 2)", "(2, 2)", "(3, 3)", "(3, 4)")));
         assertThat(resultSystem.getTransitions().size(), is(7));
         final Transition trans1 = this.getTransitionForLabel(resultSystem, "<a, *>");
         final Transition trans2 = this.getTransitionForLabel(resultSystem, "<b, b>");
         final Transition trans3 = this.getTransitionForLabel(resultSystem, "<*, c>");
         // Check transitions
-        assertThat(trans1.getSource().getName(), is("1/2"));
-        assertThat(trans1.getTarget().getName(), is("2/2"));
+        assertThat(trans1.getSource().getName(), is("(1, 2)"));
+        assertThat(trans1.getTarget().getName(), is("(2, 2)"));
 
-        assertThat(trans2.getSource().getName(), is("2/2"));
-        assertThat(trans2.getTarget().getName(), is("3/3"));
+        assertThat(trans2.getSource().getName(), is("(2, 2)"));
+        assertThat(trans2.getTarget().getName(), is("(3, 3)"));
 
-        assertThat(trans3.getSource().getName(), is("3/3"));
-        assertThat(trans3.getTarget().getName(), is("3/4"));
+        assertThat(trans3.getSource().getName(), is("(3, 3)"));
+        assertThat(trans3.getTarget().getName(), is("(3, 4)"));
 
-        assertThat(resultSystem.toString(), is("States:[1/2, 2/2, 3/3, 3/4]\n" +
+        assertThat(resultSystem.toString(), is("States:[(1, 2), (2, 2), (3, 3), (3, 4)]\n" +
                 "Transitions:\n" +
-                "1/2 --<a, *>--> 2/2,\n" +
-                "2/2 --<b, b>--> 3/3,\n" +
-                "1/2 --<*, *>--> 1/2,\n" +
-                "2/2 --<*, *>--> 2/2,\n" +
-                "3/3 --<*, c>--> 3/4,\n" +
-                "3/3 --<*, *>--> 3/3,\n" +
-                "3/4 --<*, *>--> 3/4"));
+                "(1, 2) --<a, *>--> (2, 2),\n" +
+                "(2, 2) --<b, b>--> (3, 3),\n" +
+                "(1, 2) --<*, *>--> (1, 2),\n" +
+                "(2, 2) --<*, *>--> (2, 2),\n" +
+                "(3, 3) --<*, c>--> (3, 4),\n" +
+                "(3, 3) --<*, *>--> (3, 3),\n" +
+                "(3, 4) --<*, *>--> (3, 4)"));
     }
 }

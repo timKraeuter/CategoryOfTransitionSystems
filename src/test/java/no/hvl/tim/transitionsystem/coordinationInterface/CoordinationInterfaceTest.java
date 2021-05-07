@@ -65,28 +65,28 @@ class CoordinationInterfaceTest implements TransitionSystemTestHelper {
         final TransitionSystem coordinationSystem = coordinatedTSs.getI1().getTarget();
         assertThat(
                 this.getStateNamesForTS(coordinationSystem),
-                is(Sets.newHashSet("red/cross", "red-amber/wait")));
+                is(Sets.newHashSet("(red, cross)", "(red-amber, wait)")));
         assertThat(coordinationSystem.getTransitions().size(), is(4));
         // 2 Transitions (and 2 idle transitions)
         this.expectTransitionWithLabelFromTo(
                 coordinationSystem,
-                "red/cross",
-                "red-amber/wait",
+                "(red, cross)",
+                "(red-amber, wait)",
                 "<turn red-amber, switch to wait>");
         this.expectTransitionWithLabelFromTo(
                 coordinationSystem,
-                "red-amber/wait",
-                "red/cross",
+                "(red-amber, wait)",
+                "(red, cross)",
                 "<turn red, switch to cross>");
 
         // Check state mapping
-        this.expectStateMapping(coordinatedTSs.getI1(), "red", "red/cross");
-        this.expectStateMapping(coordinatedTSs.getI1(), "green", "red-amber/wait");
-        this.expectStateMapping(coordinatedTSs.getI1(), "red-amber", "red-amber/wait");
-        this.expectStateMapping(coordinatedTSs.getI1(), "amber", "red-amber/wait");
+        this.expectStateMapping(coordinatedTSs.getI1(), "red", "(red, cross)");
+        this.expectStateMapping(coordinatedTSs.getI1(), "green", "(red-amber, wait)");
+        this.expectStateMapping(coordinatedTSs.getI1(), "red-amber", "(red-amber, wait)");
+        this.expectStateMapping(coordinatedTSs.getI1(), "amber", "(red-amber, wait)");
 
-        this.expectStateMapping(coordinatedTSs.getI2(), "cross", "red/cross");
-        this.expectStateMapping(coordinatedTSs.getI2(), "wait", "red-amber/wait");
+        this.expectStateMapping(coordinatedTSs.getI2(), "cross", "(red, cross)");
+        this.expectStateMapping(coordinatedTSs.getI2(), "wait", "(red-amber, wait)");
 
         final PullbackResult pullbackResult = PullbackResult.calculate(coordinatedTSs);
         this.checkTLPullback(pullbackResult);
@@ -125,27 +125,27 @@ class CoordinationInterfaceTest implements TransitionSystemTestHelper {
         final TransitionSystem coordinationSystem = coordinatedTSs.getI1().getTarget();
         assertThat(
                 this.getStateNamesForTS(coordinationSystem),
-                is(Sets.newHashSet("A/B", "C/C")));
+                is(Sets.newHashSet("(A, B)", "(C, C)")));
         // 1 Transitions (and 2 idle transitions)
         assertThat(coordinationSystem.getTransitions().size(), is(3));
         this.expectTransitionWithLabelFromTo(
                 coordinationSystem,
-                "A/B",
-                "C/C",
+                "(A, B)",
+                "(C, C)",
                 "<bc, bc>");
         // 2 Idle transitions
         this.expectTransitionWithLabelFromTo(
                 coordinationSystem,
-                "A/B",
-                "A/B",
+                "(A, B)",
+                "(A, B)",
                 "*");
         this.expectTransitionWithLabelFromTo(
                 coordinationSystem,
-                "C/C",
-                "C/C",
+                "(C, C)",
+                "(C, C)",
                 "*");
 
         final PullbackResult result = PullbackResult.calculate(coordinatedTSs);
-        checkABCPullback(result);
+        this.checkABCPullback(result);
     }
 }

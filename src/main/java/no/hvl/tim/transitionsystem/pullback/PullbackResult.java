@@ -11,7 +11,7 @@ public class PullbackResult {
     /**
      * Pattern for the composite names of the states in a pullback.
      */
-    public static final String STATE_NAME_PATTERN = "%s/%s";
+    public static final String STATE_NAME_PATTERN = "(%s, %s)";
 
     /**
      * Pattern for the execution of parallel transitions in the pullback system.
